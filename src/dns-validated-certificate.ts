@@ -1,14 +1,13 @@
-import * as path from 'path'
 import * as cdk from 'aws-cdk-lib'
 import * as certificatemanager from 'aws-cdk-lib/aws-certificatemanager'
 import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch'
 import * as iam from 'aws-cdk-lib/aws-iam'
 import * as lambda from 'aws-cdk-lib/aws-lambda'
-import * as lambda_nodejs from 'aws-cdk-lib/aws-lambda-nodejs'
 import * as route53 from 'aws-cdk-lib/aws-route53'
 import * as custom_resources from 'aws-cdk-lib/custom-resources'
 import { Construct } from 'constructs'
-import { Properties } from './lambda/handler'
+import { CertificateRequestorFunction } from './certificate-requestor-function'
+import { Properties } from './certificate-requestor.lambda'
 
 export interface DnsValidatedCertificateProps {
   /**
@@ -188,9 +187,7 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
     this.tags = new cdk.TagManager(cdk.TagType.MAP, CERTTIFICATE_RESOURCE_TYPE)
     this.removalPolicy = props.removalPolicy ?? cdk.RemovalPolicy.DESTROY
 
-    const requestorFunction = new lambda_nodejs.NodejsFunction(this, 'RequestorFunction', {
-      entry: path.join(__dirname, 'lambda', 'handler.ts'),
-      runtime: lambda.Runtime.NODEJS_18_X,
+    const requestorFunction = new CertificateRequestorFunction(this, 'RequestorFunction', {
       architecture: lambda.Architecture.ARM_64,
       timeout: cdk.Duration.minutes(14),
       role: props.customResourceRole,

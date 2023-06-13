@@ -53,3 +53,5 @@ junit.xml
 .jsii
 tsconfig.json
 !/API.md
+/assets/
+!/src/certificate-requestor-function.ts

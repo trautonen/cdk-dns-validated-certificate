@@ -8,6 +8,9 @@
   "scripts": {
     "build": "npx projen build",
     "bump": "npx projen bump",
+    "bundle": "npx projen bundle",
+    "bundle:certificate-requestor.lambda": "npx projen bundle:certificate-requestor.lambda",
+    "bundle:certificate-requestor.lambda:watch": "npx projen bundle:certificate-requestor.lambda:watch",
     "clobber": "npx projen clobber",
     "compat": "npx projen compat",
     "compile": "npx projen compile",

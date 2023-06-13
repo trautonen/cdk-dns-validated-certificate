@@ -56,7 +56,7 @@
       "error",
       {
         "devDependencies": [
-          "src/lambda/**/*.ts"
+          "src/**/*.lambda.ts"
         ]
       }
     ],

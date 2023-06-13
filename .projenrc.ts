@@ -1,4 +1,5 @@
 import { awscdk } from 'projen'
+import { LambdaRuntime } from 'projen/lib/awscdk'
 import { NodePackageManager, NpmAccess, ProseWrap } from 'projen/lib/javascript'
 
 const awsSdkVersion = '^3.0.0'
@@ -19,6 +20,14 @@ const project = new awscdk.AwsCdkConstructLibrary({
   projenrcTs: true,
   releaseToNpm: true,
   npmAccess: NpmAccess.PUBLIC,
+
+  lambdaOptions: {
+    runtime: LambdaRuntime.NODEJS_18_X,
+    bundlingOptions: {
+      externals: ['@aws-sdk/*'],
+      sourcemap: true,
+    },
+  },
 
   packageManager: NodePackageManager.NPM,
   prettier: true,
@@ -43,7 +52,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
 })
 
 project.eslint?.addRules({
-  'import/no-extraneous-dependencies': ['error', { devDependencies: ['src/lambda/**/*.ts'] }],
+  'import/no-extraneous-dependencies': ['error', { devDependencies: ['src/**/*.lambda.ts'] }],
 })
 
 project.synth()
