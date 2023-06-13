@@ -33,8 +33,9 @@ const project = new awscdk.AwsCdkConstructLibrary({
     `@aws-sdk/client-route-53@${awsSdkVersion}`,
     `@aws-sdk/client-sts@${awsSdkVersion}`,
     `@aws-sdk/types@${awsSdkVersion}`,
-    'aws-lambda',
     '@types/aws-lambda',
+    'aws-lambda',
+    'esbuild',
   ],
 })
 
