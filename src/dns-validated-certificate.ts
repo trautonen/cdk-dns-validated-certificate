@@ -224,7 +224,7 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
 
       requestorFunction.addToRolePolicy(
         new iam.PolicyStatement({
-          actions: ['route53:changeResourceRecordSets'],
+          actions: ['route53:ChangeResourceRecordSets'],
           resources: [`arn:aws:route53:::hostedzone/${this.hostedZoneId}`],
           conditions: {
             'ForAllValues:StringEquals': {
