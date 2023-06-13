@@ -43,7 +43,7 @@ const certificate = new DnsValidatedCertificate(this, 'CrossAccountCertificate',
 
 ## Constructs <a name="Constructs" id="Constructs"></a>
 
-### DnsValidatedCertificate <a name="DnsValidatedCertificate" id="cdk-dns-validated-certificate.DnsValidatedCertificate"></a>
+### DnsValidatedCertificate <a name="DnsValidatedCertificate" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate"></a>
 
 - *Implements:* aws-cdk-lib.aws_certificatemanager.ICertificate, aws-cdk-lib.ITaggable
 
@@ -89,23 +89,23 @@ const certificate = new DnsValidatedCertificate(this, 'CrossAccountCertificate',
 ```
 
 
-#### Initializers <a name="Initializers" id="cdk-dns-validated-certificate.DnsValidatedCertificate.Initializer"></a>
+#### Initializers <a name="Initializers" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.Initializer"></a>
 
 ```typescript
-import { DnsValidatedCertificate } from 'cdk-dns-validated-certificate'
+import { DnsValidatedCertificate } from '@trautonen/cdk-dns-validated-certificate'
 
 new DnsValidatedCertificate(scope: Construct, id: string, props: DnsValidatedCertificateProps)
 ```
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificate.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | construct hosting this construct. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificate.Initializer.parameter.id">id</a></code> | <code>string</code> | construct's identifier. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificate.Initializer.parameter.props">props</a></code> | <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificateProps">DnsValidatedCertificateProps</a></code> | properties for the construct. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | construct hosting this construct. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.Initializer.parameter.id">id</a></code> | <code>string</code> | construct's identifier. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.Initializer.parameter.props">props</a></code> | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps">DnsValidatedCertificateProps</a></code> | properties for the construct. |
 
 ---
 
-##### `scope`<sup>Required</sup> <a name="scope" id="cdk-dns-validated-certificate.DnsValidatedCertificate.Initializer.parameter.scope"></a>
+##### `scope`<sup>Required</sup> <a name="scope" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.Initializer.parameter.scope"></a>
 
 - *Type:* constructs.Construct
 
@@ -113,7 +113,7 @@ construct hosting this construct.
 
 ---
 
-##### `id`<sup>Required</sup> <a name="id" id="cdk-dns-validated-certificate.DnsValidatedCertificate.Initializer.parameter.id"></a>
+##### `id`<sup>Required</sup> <a name="id" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.Initializer.parameter.id"></a>
 
 - *Type:* string
 
@@ -121,9 +121,9 @@ construct's identifier.
 
 ---
 
-##### `props`<sup>Required</sup> <a name="props" id="cdk-dns-validated-certificate.DnsValidatedCertificate.Initializer.parameter.props"></a>
+##### `props`<sup>Required</sup> <a name="props" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.Initializer.parameter.props"></a>
 
-- *Type:* <a href="#cdk-dns-validated-certificate.DnsValidatedCertificateProps">DnsValidatedCertificateProps</a>
+- *Type:* <a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps">DnsValidatedCertificateProps</a>
 
 properties for the construct.
 
@@ -133,13 +133,13 @@ properties for the construct.
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificate.toString">toString</a></code> | Returns a string representation of this construct. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificate.applyRemovalPolicy">applyRemovalPolicy</a></code> | Apply the given removal policy to this resource. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificate.metricDaysToExpiry">metricDaysToExpiry</a></code> | Return the DaysToExpiry metric for this AWS Certificate Manager Certificate. By default, this is the minimum value over 1 day. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.applyRemovalPolicy">applyRemovalPolicy</a></code> | Apply the given removal policy to this resource. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.metricDaysToExpiry">metricDaysToExpiry</a></code> | Return the DaysToExpiry metric for this AWS Certificate Manager Certificate. By default, this is the minimum value over 1 day. |
 
 ---
 
-##### `toString` <a name="toString" id="cdk-dns-validated-certificate.DnsValidatedCertificate.toString"></a>
+##### `toString` <a name="toString" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.toString"></a>
 
 ```typescript
 public toString(): string
@@ -147,7 +147,7 @@ public toString(): string
 
 Returns a string representation of this construct.
 
-##### `applyRemovalPolicy` <a name="applyRemovalPolicy" id="cdk-dns-validated-certificate.DnsValidatedCertificate.applyRemovalPolicy"></a>
+##### `applyRemovalPolicy` <a name="applyRemovalPolicy" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.applyRemovalPolicy"></a>
 
 ```typescript
 public applyRemovalPolicy(policy: RemovalPolicy): void
@@ -163,13 +163,13 @@ to be replaced.
 The resource can be deleted (`RemovalPolicy.DESTROY`), or left in your AWS
 account for data recovery and cleanup later (`RemovalPolicy.RETAIN`).
 
-###### `policy`<sup>Required</sup> <a name="policy" id="cdk-dns-validated-certificate.DnsValidatedCertificate.applyRemovalPolicy.parameter.policy"></a>
+###### `policy`<sup>Required</sup> <a name="policy" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.applyRemovalPolicy.parameter.policy"></a>
 
 - *Type:* aws-cdk-lib.RemovalPolicy
 
 ---
 
-##### `metricDaysToExpiry` <a name="metricDaysToExpiry" id="cdk-dns-validated-certificate.DnsValidatedCertificate.metricDaysToExpiry"></a>
+##### `metricDaysToExpiry` <a name="metricDaysToExpiry" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.metricDaysToExpiry"></a>
 
 ```typescript
 public metricDaysToExpiry(props?: MetricOptions): Metric
@@ -181,7 +181,7 @@ This metric is no longer emitted once the certificate has effectively
 expired, so alarms configured on this metric should probably treat missing
 data as "breaching".
 
-###### `props`<sup>Optional</sup> <a name="props" id="cdk-dns-validated-certificate.DnsValidatedCertificate.metricDaysToExpiry.parameter.props"></a>
+###### `props`<sup>Optional</sup> <a name="props" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.metricDaysToExpiry.parameter.props"></a>
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
@@ -191,23 +191,23 @@ data as "breaching".
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificate.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificate.isOwnedResource">isOwnedResource</a></code> | Returns true if the construct was created by CDK, and false otherwise. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificate.isResource">isResource</a></code> | Check whether the given construct is a Resource. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.isOwnedResource">isOwnedResource</a></code> | Returns true if the construct was created by CDK, and false otherwise. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.isResource">isResource</a></code> | Check whether the given construct is a Resource. |
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="cdk-dns-validated-certificate.DnsValidatedCertificate.isConstruct"></a>
+##### ~~`isConstruct`~~ <a name="isConstruct" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.isConstruct"></a>
 
 ```typescript
-import { DnsValidatedCertificate } from 'cdk-dns-validated-certificate'
+import { DnsValidatedCertificate } from '@trautonen/cdk-dns-validated-certificate'
 
 DnsValidatedCertificate.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
 
-###### `x`<sup>Required</sup> <a name="x" id="cdk-dns-validated-certificate.DnsValidatedCertificate.isConstruct.parameter.x"></a>
+###### `x`<sup>Required</sup> <a name="x" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.isConstruct.parameter.x"></a>
 
 - *Type:* any
 
@@ -215,33 +215,33 @@ Any object.
 
 ---
 
-##### `isOwnedResource` <a name="isOwnedResource" id="cdk-dns-validated-certificate.DnsValidatedCertificate.isOwnedResource"></a>
+##### `isOwnedResource` <a name="isOwnedResource" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.isOwnedResource"></a>
 
 ```typescript
-import { DnsValidatedCertificate } from 'cdk-dns-validated-certificate'
+import { DnsValidatedCertificate } from '@trautonen/cdk-dns-validated-certificate'
 
 DnsValidatedCertificate.isOwnedResource(construct: IConstruct)
 ```
 
 Returns true if the construct was created by CDK, and false otherwise.
 
-###### `construct`<sup>Required</sup> <a name="construct" id="cdk-dns-validated-certificate.DnsValidatedCertificate.isOwnedResource.parameter.construct"></a>
+###### `construct`<sup>Required</sup> <a name="construct" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.isOwnedResource.parameter.construct"></a>
 
 - *Type:* constructs.IConstruct
 
 ---
 
-##### `isResource` <a name="isResource" id="cdk-dns-validated-certificate.DnsValidatedCertificate.isResource"></a>
+##### `isResource` <a name="isResource" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.isResource"></a>
 
 ```typescript
-import { DnsValidatedCertificate } from 'cdk-dns-validated-certificate'
+import { DnsValidatedCertificate } from '@trautonen/cdk-dns-validated-certificate'
 
 DnsValidatedCertificate.isResource(construct: IConstruct)
 ```
 
 Check whether the given construct is a Resource.
 
-###### `construct`<sup>Required</sup> <a name="construct" id="cdk-dns-validated-certificate.DnsValidatedCertificate.isResource.parameter.construct"></a>
+###### `construct`<sup>Required</sup> <a name="construct" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.isResource.parameter.construct"></a>
 
 - *Type:* constructs.IConstruct
 
@@ -251,19 +251,19 @@ Check whether the given construct is a Resource.
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificate.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificate.property.env">env</a></code> | <code>aws-cdk-lib.ResourceEnvironment</code> | The environment this resource belongs to. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificate.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificate.property.certificateArn">certificateArn</a></code> | <code>string</code> | The certificate's ARN. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificate.property.certificateRegion">certificateRegion</a></code> | <code>string</code> | The region where the certificate is deployed to. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificate.property.domainName">domainName</a></code> | <code>string</code> | The domain name included in the certificate. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificate.property.hostedZoneId">hostedZoneId</a></code> | <code>string</code> | The hosted zone identifier authoritative for the certificate. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificate.property.hostedZoneName">hostedZoneName</a></code> | <code>string</code> | The hosted zone name authoritative for the certificate. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificate.property.tags">tags</a></code> | <code>aws-cdk-lib.TagManager</code> | The tag manager to set, remove and format tags for the certificate. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.env">env</a></code> | <code>aws-cdk-lib.ResourceEnvironment</code> | The environment this resource belongs to. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.certificateArn">certificateArn</a></code> | <code>string</code> | The certificate's ARN. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.certificateRegion">certificateRegion</a></code> | <code>string</code> | The region where the certificate is deployed to. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.domainName">domainName</a></code> | <code>string</code> | The domain name included in the certificate. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.hostedZoneId">hostedZoneId</a></code> | <code>string</code> | The hosted zone identifier authoritative for the certificate. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.hostedZoneName">hostedZoneName</a></code> | <code>string</code> | The hosted zone name authoritative for the certificate. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.tags">tags</a></code> | <code>aws-cdk-lib.TagManager</code> | The tag manager to set, remove and format tags for the certificate. |
 
 ---
 
-##### `node`<sup>Required</sup> <a name="node" id="cdk-dns-validated-certificate.DnsValidatedCertificate.property.node"></a>
+##### `node`<sup>Required</sup> <a name="node" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.node"></a>
 
 ```typescript
 public readonly node: Node;
@@ -275,7 +275,7 @@ The tree node.
 
 ---
 
-##### `env`<sup>Required</sup> <a name="env" id="cdk-dns-validated-certificate.DnsValidatedCertificate.property.env"></a>
+##### `env`<sup>Required</sup> <a name="env" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.env"></a>
 
 ```typescript
 public readonly env: ResourceEnvironment;
@@ -294,7 +294,7 @@ that might be different than the stack they were imported into.
 
 ---
 
-##### `stack`<sup>Required</sup> <a name="stack" id="cdk-dns-validated-certificate.DnsValidatedCertificate.property.stack"></a>
+##### `stack`<sup>Required</sup> <a name="stack" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.stack"></a>
 
 ```typescript
 public readonly stack: Stack;
@@ -306,7 +306,7 @@ The stack in which this resource is defined.
 
 ---
 
-##### `certificateArn`<sup>Required</sup> <a name="certificateArn" id="cdk-dns-validated-certificate.DnsValidatedCertificate.property.certificateArn"></a>
+##### `certificateArn`<sup>Required</sup> <a name="certificateArn" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.certificateArn"></a>
 
 ```typescript
 public readonly certificateArn: string;
@@ -318,7 +318,7 @@ The certificate's ARN.
 
 ---
 
-##### `certificateRegion`<sup>Required</sup> <a name="certificateRegion" id="cdk-dns-validated-certificate.DnsValidatedCertificate.property.certificateRegion"></a>
+##### `certificateRegion`<sup>Required</sup> <a name="certificateRegion" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.certificateRegion"></a>
 
 ```typescript
 public readonly certificateRegion: string;
@@ -330,7 +330,7 @@ The region where the certificate is deployed to.
 
 ---
 
-##### `domainName`<sup>Required</sup> <a name="domainName" id="cdk-dns-validated-certificate.DnsValidatedCertificate.property.domainName"></a>
+##### `domainName`<sup>Required</sup> <a name="domainName" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.domainName"></a>
 
 ```typescript
 public readonly domainName: string;
@@ -342,7 +342,7 @@ The domain name included in the certificate.
 
 ---
 
-##### `hostedZoneId`<sup>Required</sup> <a name="hostedZoneId" id="cdk-dns-validated-certificate.DnsValidatedCertificate.property.hostedZoneId"></a>
+##### `hostedZoneId`<sup>Required</sup> <a name="hostedZoneId" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.hostedZoneId"></a>
 
 ```typescript
 public readonly hostedZoneId: string;
@@ -354,7 +354,7 @@ The hosted zone identifier authoritative for the certificate.
 
 ---
 
-##### `hostedZoneName`<sup>Required</sup> <a name="hostedZoneName" id="cdk-dns-validated-certificate.DnsValidatedCertificate.property.hostedZoneName"></a>
+##### `hostedZoneName`<sup>Required</sup> <a name="hostedZoneName" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.hostedZoneName"></a>
 
 ```typescript
 public readonly hostedZoneName: string;
@@ -366,7 +366,7 @@ The hosted zone name authoritative for the certificate.
 
 ---
 
-##### `tags`<sup>Required</sup> <a name="tags" id="cdk-dns-validated-certificate.DnsValidatedCertificate.property.tags"></a>
+##### `tags`<sup>Required</sup> <a name="tags" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.tags"></a>
 
 ```typescript
 public readonly tags: TagManager;
@@ -381,12 +381,12 @@ The tag manager to set, remove and format tags for the certificate.
 
 ## Structs <a name="Structs" id="Structs"></a>
 
-### DnsValidatedCertificateProps <a name="DnsValidatedCertificateProps" id="cdk-dns-validated-certificate.DnsValidatedCertificateProps"></a>
+### DnsValidatedCertificateProps <a name="DnsValidatedCertificateProps" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps"></a>
 
-#### Initializer <a name="Initializer" id="cdk-dns-validated-certificate.DnsValidatedCertificateProps.Initializer"></a>
+#### Initializer <a name="Initializer" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.Initializer"></a>
 
 ```typescript
-import { DnsValidatedCertificateProps } from 'cdk-dns-validated-certificate'
+import { DnsValidatedCertificateProps } from '@trautonen/cdk-dns-validated-certificate'
 
 const dnsValidatedCertificateProps: DnsValidatedCertificateProps = { ... }
 ```
@@ -395,19 +395,19 @@ const dnsValidatedCertificateProps: DnsValidatedCertificateProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.domainName">domainName</a></code> | <code>string</code> | Fully-qualified domain name to request a certificate for. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.hostedZone">hostedZone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | Hosted zone to use for DNS validation. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.certificateRegion">certificateRegion</a></code> | <code>string</code> | AWS region where the certificate is deployed. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.cleanupValidationRecords">cleanupValidationRecords</a></code> | <code>boolean</code> | Enable or disable cleaning of validation DNS records from the hosted zone. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.customResourceRole">customResourceRole</a></code> | <code>aws-cdk-lib.aws_iam.IRole</code> | The role that is used for the custom resource Lambda execution. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | Apply the given removal policy to this resource. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.transparencyLoggingEnabled">transparencyLoggingEnabled</a></code> | <code>boolean</code> | Enable or disable transparency logging for this certificate. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.validationExternalId">validationExternalId</a></code> | <code>string</code> | External id for ``validationRole`` role assume verification. |
-| <code><a href="#cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.validationRole">validationRole</a></code> | <code>aws-cdk-lib.aws_iam.IRole</code> | The role that is assumed for DNS record changes for certificate validation. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.domainName">domainName</a></code> | <code>string</code> | Fully-qualified domain name to request a certificate for. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.hostedZone">hostedZone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | Hosted zone to use for DNS validation. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.certificateRegion">certificateRegion</a></code> | <code>string</code> | AWS region where the certificate is deployed. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.cleanupValidationRecords">cleanupValidationRecords</a></code> | <code>boolean</code> | Enable or disable cleaning of validation DNS records from the hosted zone. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.customResourceRole">customResourceRole</a></code> | <code>aws-cdk-lib.aws_iam.IRole</code> | The role that is used for the custom resource Lambda execution. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | Apply the given removal policy to this resource. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.transparencyLoggingEnabled">transparencyLoggingEnabled</a></code> | <code>boolean</code> | Enable or disable transparency logging for this certificate. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.validationExternalId">validationExternalId</a></code> | <code>string</code> | External id for ``validationRole`` role assume verification. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.validationRole">validationRole</a></code> | <code>aws-cdk-lib.aws_iam.IRole</code> | The role that is assumed for DNS record changes for certificate validation. |
 
 ---
 
-##### `domainName`<sup>Required</sup> <a name="domainName" id="cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.domainName"></a>
+##### `domainName`<sup>Required</sup> <a name="domainName" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.domainName"></a>
 
 ```typescript
 public readonly domainName: string;
@@ -421,7 +421,7 @@ May contain wildcards, such as ``*.domain.com``.
 
 ---
 
-##### `hostedZone`<sup>Required</sup> <a name="hostedZone" id="cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.hostedZone"></a>
+##### `hostedZone`<sup>Required</sup> <a name="hostedZone" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.hostedZone"></a>
 
 ```typescript
 public readonly hostedZone: IHostedZone;
@@ -436,7 +436,7 @@ If the hosted zone is not managed by the CDK application, it needs to be provide
 
 ---
 
-##### `certificateRegion`<sup>Optional</sup> <a name="certificateRegion" id="cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.certificateRegion"></a>
+##### `certificateRegion`<sup>Optional</sup> <a name="certificateRegion" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.certificateRegion"></a>
 
 ```typescript
 public readonly certificateRegion: string;
@@ -452,7 +452,7 @@ zone is in the same account.
 
 ---
 
-##### `cleanupValidationRecords`<sup>Optional</sup> <a name="cleanupValidationRecords" id="cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.cleanupValidationRecords"></a>
+##### `cleanupValidationRecords`<sup>Optional</sup> <a name="cleanupValidationRecords" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.cleanupValidationRecords"></a>
 
 ```typescript
 public readonly cleanupValidationRecords: boolean;
@@ -470,7 +470,7 @@ property after creation, a new certificate will be requested.
 
 ---
 
-##### `customResourceRole`<sup>Optional</sup> <a name="customResourceRole" id="cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.customResourceRole"></a>
+##### `customResourceRole`<sup>Optional</sup> <a name="customResourceRole" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.customResourceRole"></a>
 
 ```typescript
 public readonly customResourceRole: IRole;
@@ -487,7 +487,7 @@ account and the execution role is given permissions to change DNS records for th
 
 ---
 
-##### `removalPolicy`<sup>Optional</sup> <a name="removalPolicy" id="cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.removalPolicy"></a>
+##### `removalPolicy`<sup>Optional</sup> <a name="removalPolicy" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.removalPolicy"></a>
 
 ```typescript
 public readonly removalPolicy: RemovalPolicy;
@@ -506,7 +506,7 @@ certificate will be requested.
 
 ---
 
-##### `transparencyLoggingEnabled`<sup>Optional</sup> <a name="transparencyLoggingEnabled" id="cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.transparencyLoggingEnabled"></a>
+##### `transparencyLoggingEnabled`<sup>Optional</sup> <a name="transparencyLoggingEnabled" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.transparencyLoggingEnabled"></a>
 
 ```typescript
 public readonly transparencyLoggingEnabled: boolean;
@@ -524,7 +524,7 @@ effect. If you change this property after creation, a new certificate will be re
 
 ---
 
-##### `validationExternalId`<sup>Optional</sup> <a name="validationExternalId" id="cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.validationExternalId"></a>
+##### `validationExternalId`<sup>Optional</sup> <a name="validationExternalId" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.validationExternalId"></a>
 
 ```typescript
 public readonly validationExternalId: string;
@@ -539,7 +539,7 @@ This should be used only when ``validationRole`` is given and the role expects a
 
 ---
 
-##### `validationRole`<sup>Optional</sup> <a name="validationRole" id="cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.validationRole"></a>
+##### `validationRole`<sup>Optional</sup> <a name="validationRole" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.validationRole"></a>
 
 ```typescript
 public readonly validationRole: IRole;

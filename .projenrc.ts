@@ -8,6 +8,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   authorAddress: 'trautonen@users.noreply.github.com',
   cdkVersion: '2.83.1',
   name: 'cdk-dns-validated-certificate',
+  packageName: '@trautonen/cdk-dns-validated-certificate',
   description: 'CDK certificate construct that supports cross-region and cross-account DNS validation',
   keywords: ['aws', 'cdk', 'dns', 'certificate', 'cross-region', 'cross-account'],
   license: 'Apache-2.0',

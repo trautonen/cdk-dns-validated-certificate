@@ -1,5 +1,5 @@
 {
-  "name": "cdk-dns-validated-certificate",
+  "name": "@trautonen/cdk-dns-validated-certificate",
   "description": "CDK certificate construct that supports cross-region and cross-account DNS validation",
   "repository": {
     "type": "git",
