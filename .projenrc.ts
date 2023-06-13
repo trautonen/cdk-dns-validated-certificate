@@ -1,5 +1,5 @@
 import { awscdk } from 'projen'
-import { NodePackageManager, ProseWrap } from 'projen/lib/javascript'
+import { NodePackageManager, NpmAccess, ProseWrap } from 'projen/lib/javascript'
 
 const awsSdkVersion = '^3.0.0'
 
@@ -17,6 +17,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
   defaultReleaseBranch: 'main',
   jsiiVersion: '~5.0.0',
   projenrcTs: true,
+  releaseToNpm: true,
+  npmAccess: NpmAccess.PUBLIC,
 
   packageManager: NodePackageManager.NPM,
   prettier: true,
