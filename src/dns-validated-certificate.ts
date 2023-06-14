@@ -232,7 +232,9 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
               'route53:ChangeResourceRecordSetsActions': ['UPSERT', 'DELETE'],
             },
             'ForAllValues:StringLike': {
-              'route53:ChangeResourceRecordSetsNormalizedRecordNames': [this.domainName],
+              'route53:ChangeResourceRecordSetsNormalizedRecordNames': [
+                this.wildcardDomainName('MainDomainWildcard', this.domainName),
+              ],
             },
           },
         })
@@ -298,6 +300,15 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
       return hostedZoneId
     }
     return hostedZoneId.replace(/^\/hostedzone\//, '')
+  }
+
+  private wildcardDomainName(id: string, domainName: string): string {
+    const parts = cdk.Fn.split('.', domainName)
+    const first = cdk.Fn.select(0, parts)
+    const isWildcard = new cdk.CfnCondition(this, `Is${id}`, {
+      expression: cdk.Fn.conditionEquals(first, '*'),
+    })
+    return cdk.Fn.conditionIf(isWildcard.logicalId, domainName, `*.${domainName}`).toString()
   }
 
   private validateDomainToHostedZone(domainName: string, hostedZoneName: string): string[] {

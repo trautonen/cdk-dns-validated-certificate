@@ -23,4 +23,8 @@ test('DnsValidatedCertificate is created', () => {
     HostedZoneId: 'Z53279245PYHBAN3YU2K',
     DomainName: 'example.com',
   })
+
+  template.hasCondition('*', {
+    'Fn::Equals': ['example', '*'],
+  })
 })
