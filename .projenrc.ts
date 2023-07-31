@@ -49,6 +49,12 @@ const project = new awscdk.AwsCdkConstructLibrary({
   autoMerge: true,
   autoApproveUpgrades: true,
 
+  autoApproveOptions: {
+    allowedUsernames: ['trautonen'],
+    label: 'auto-approve',
+    secret: 'PROJEN_GITHUB_TOKEN',
+  },
+
   devDeps: [
     `@aws-sdk/client-acm@${awsSdkVersion}`,
     `@aws-sdk/client-route-53@${awsSdkVersion}`,
@@ -63,7 +69,5 @@ const project = new awscdk.AwsCdkConstructLibrary({
 project.eslint?.addRules({
   'import/no-extraneous-dependencies': ['error', { devDependencies: ['src/**/*.lambda.ts'] }],
 })
-
-project.autoMerge?.addConditions('label=auto-approve')
 
 project.synth()
