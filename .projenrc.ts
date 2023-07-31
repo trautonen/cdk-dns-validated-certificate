@@ -40,6 +40,15 @@ const project = new awscdk.AwsCdkConstructLibrary({
     },
   },
 
+  depsUpgradeOptions: {
+    workflowOptions: {
+      labels: ['auto-approve'],
+    },
+  },
+
+  autoMerge: true,
+  autoApproveUpgrades: true,
+
   devDeps: [
     `@aws-sdk/client-acm@${awsSdkVersion}`,
     `@aws-sdk/client-route-53@${awsSdkVersion}`,
@@ -54,5 +63,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
 project.eslint?.addRules({
   'import/no-extraneous-dependencies': ['error', { devDependencies: ['src/**/*.lambda.ts'] }],
 })
+
+project.autoMerge?.addConditions('label=auto-approve')
 
 project.synth()
