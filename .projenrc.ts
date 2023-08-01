@@ -50,9 +50,9 @@ const project = new awscdk.AwsCdkConstructLibrary({
   autoApproveUpgrades: true,
 
   autoApproveOptions: {
-    allowedUsernames: ['trautonen'],
+    allowedUsernames: ['github-bot'],
     label: 'auto-approve',
-    secret: 'PROJEN_GITHUB_TOKEN',
+    secret: 'GITHUB_TOKEN',
   },
 
   devDeps: [
