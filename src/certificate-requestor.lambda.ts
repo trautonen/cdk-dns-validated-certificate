@@ -66,9 +66,12 @@ const parseProperties = (properties: Record<string, any>): Properties => {
   return properties as unknown as Properties
 }
 
+const stringifyProperties = (properties: Properties): string => {
+  return JSON.stringify(properties, undefined, 2)
+}
+
 const parseDomainValidationRecords = (certificate: CertificateDetail): ResourceRecordSet[] | null => {
   const options = certificate.DomainValidationOptions ?? []
-  console.log('options: ', options)
   if (options.length > 0 && options.every((opt) => opt.ResourceRecord?.Name)) {
     const uniqueRecords = [...new Map(options.map((opt) => [opt.ResourceRecord?.Name!, opt.ResourceRecord!])).values()]
     return uniqueRecords.map((record) => {
@@ -150,7 +153,7 @@ const requestCertificate = async (
     console.log(`${record.Name} ${record.Type} ${record.ResourceRecords?.map((rr) => rr.Value).join(',')}`)
   )
   const changeId = await changeRecordSets(route53, 'UPSERT', validationRecords, HostedZoneId)
-  console.log(`All validation records changed succesfully for change id ${changeId}`)
+  console.log(`All validation records changed succesfully for change id ${changeId.replace('/change/', '')}`)
 
   console.log(`Waiting for certificate ${CertificateArn} to validate`)
   const result = await waitUntilCertificateValidated({ client: acm, maxWaitTime: 300 }, { CertificateArn })
@@ -190,7 +193,7 @@ const deleteCertificate = async (
     console.log(`Deleting ${validationRecords.length} validation record(s) from hosted zone ${hostedZoneId}`)
     try {
       const changeId = await changeRecordSets(route53, 'DELETE', validationRecords, hostedZoneId)
-      console.log(`All validation records removed successfully for change id ${changeId}`)
+      console.log(`All validation records removed successfully for change id ${changeId.replace('/change/', '')}`)
     } catch (error) {
       if (error instanceof InvalidChangeBatch && error.message.includes('not found')) {
         // there's a deletion race condition where some other certificate has already deleted the records
@@ -201,7 +204,7 @@ const deleteCertificate = async (
     }
   }
 
-  console.log(`Deleting certificate ${certificateArn}`)
+  console.log(`Deleting certificate ${certificateArn} from ACM`)
   const deleteCertificateInput: DeleteCertificateCommandInput = {
     CertificateArn: certificateArn,
   }
@@ -268,6 +271,7 @@ export const handler = async (event: CloudFormationCustomResourceEvent) => {
 
   switch (event.RequestType) {
     case 'Create': {
+      console.log(`Requesting new certificate:\n${stringifyProperties(properties)}`)
       const certificateArn = await requestCertificate(acm, route53, event.RequestId, properties)
       if (properties.Tags && Object.entries(properties.Tags).length > 0) {
         await addTags(acm, certificateArn, properties.Tags)
@@ -282,6 +286,7 @@ export const handler = async (event: CloudFormationCustomResourceEvent) => {
     case 'Update': {
       let certificateArn = event.PhysicalResourceId
       if (shouldRequestNew(parseProperties(event.OldResourceProperties), properties)) {
+        console.log(`Requesting new certificate due to change of properties:\n${stringifyProperties(properties)}`)
         certificateArn = await requestCertificate(acm, route53, event.RequestId, properties)
       }
       if (properties.Tags && Object.entries(properties.Tags).length > 0) {
@@ -297,6 +302,7 @@ export const handler = async (event: CloudFormationCustomResourceEvent) => {
     case 'Delete': {
       const certificateArn = event.PhysicalResourceId
       if (properties.RemovalPolicy === 'destroy') {
+        console.log(`Deleting old certificate as per removal policy:\n${stringifyProperties(properties)}`)
         await deleteCertificate(
           acm,
           route53,
