@@ -8,6 +8,7 @@ import * as custom_resources from 'aws-cdk-lib/custom-resources'
 import { Construct } from 'constructs'
 import { CertificateRequestorFunction } from './certificate-requestor-function'
 import { Properties } from './certificate-requestor.lambda'
+import { booleanToString } from './utils'
 
 export interface DnsValidatedCertificateProps {
   /**
@@ -252,8 +253,8 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
       SubjectAlternativeNames: undefined, // not supported yet as it requires role to domain mapping
       ValidationRoleArn: props.validationRole?.roleArn,
       ValidationExternalId: props.validationExternalId,
-      CleanupValidationRecords: props.cleanupValidationRecords ?? true,
-      TransparencyLoggingEnabled: props.transparencyLoggingEnabled ?? true,
+      CleanupValidationRecords: booleanToString(props.cleanupValidationRecords ?? true),
+      TransparencyLoggingEnabled: booleanToString(props.transparencyLoggingEnabled ?? true),
       Tags: cdk.Lazy.any({ produce: () => this.tags.renderTags() }) as unknown as Record<string, string>,
       RemovalPolicy: cdk.Lazy.string({ produce: () => this.removalPolicy }),
     }

@@ -24,6 +24,7 @@ import {
 import { AssumeRoleCommand, AssumeRoleCommandInput, STSClient } from '@aws-sdk/client-sts'
 import type { AwsCredentialIdentity, Provider } from '@aws-sdk/types'
 import type { CloudFormationCustomResourceEvent } from 'aws-lambda'
+import { containsSame, objectToString, stringToBoolean, tryFor } from './utils'
 
 export type Properties = {
   HostedZoneId: string
@@ -32,42 +33,15 @@ export type Properties = {
   CertificateRegion: string
   ValidationRoleArn?: string
   ValidationExternalId?: string
-  CleanupValidationRecords: boolean
-  TransparencyLoggingEnabled: boolean
+  CleanupValidationRecords: string
+  TransparencyLoggingEnabled: string
   Tags?: Record<string, string>
   RemovalPolicy: string
-}
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
-const containsSame = <T>(array1: T[], array2: T[]): boolean => {
-  if (array1.length !== array2.length) return false
-  return array1.every((v1) => array2.includes(v1))
-}
-
-const tryFor = async <T>(maxSeconds: number, timeoutError: string, fn: () => Promise<T | null>): Promise<T> => {
-  const startTime = Date.now()
-  // eslint-disable-next-line no-constant-condition
-  for (let i = 0; true; i++) {
-    if (Date.now() > startTime + maxSeconds * 1000) {
-      throw new Error(timeoutError)
-    }
-    const result = await fn()
-    if (result !== null) {
-      return result
-    }
-    const base = Math.pow(2, i)
-    await sleep(Math.random() * base * 50 + base * 150)
-  }
 }
 
 const parseProperties = (properties: Record<string, any>): Properties => {
   // maybe should actually parse and not just assume
   return properties as unknown as Properties
-}
-
-const stringifyProperties = (properties: Properties): string => {
-  return JSON.stringify(properties, undefined, 2)
 }
 
 const parseDomainValidationRecords = (certificate: CertificateDetail): ResourceRecordSet[] | null => {
@@ -271,7 +245,7 @@ export const handler = async (event: CloudFormationCustomResourceEvent) => {
 
   switch (event.RequestType) {
     case 'Create': {
-      console.log(`Requesting new certificate:\n${stringifyProperties(properties)}`)
+      console.log(`Requesting new certificate:\n${objectToString(properties)}`)
       const certificateArn = await requestCertificate(acm, route53, event.RequestId, properties)
       if (properties.Tags && Object.entries(properties.Tags).length > 0) {
         await addTags(acm, certificateArn, properties.Tags)
@@ -286,7 +260,7 @@ export const handler = async (event: CloudFormationCustomResourceEvent) => {
     case 'Update': {
       let certificateArn = event.PhysicalResourceId
       if (shouldRequestNew(parseProperties(event.OldResourceProperties), properties)) {
-        console.log(`Requesting new certificate due to change of properties:\n${stringifyProperties(properties)}`)
+        console.log(`Requesting new certificate due to change of properties:\n${objectToString(properties)}`)
         certificateArn = await requestCertificate(acm, route53, event.RequestId, properties)
       }
       if (properties.Tags && Object.entries(properties.Tags).length > 0) {
@@ -302,13 +276,13 @@ export const handler = async (event: CloudFormationCustomResourceEvent) => {
     case 'Delete': {
       const certificateArn = event.PhysicalResourceId
       if (properties.RemovalPolicy === 'destroy') {
-        console.log(`Deleting old certificate as per removal policy:\n${stringifyProperties(properties)}`)
+        console.log(`Deleting old certificate as per removal policy:\n${objectToString(properties)}`)
         await deleteCertificate(
           acm,
           route53,
           certificateArn,
           properties.HostedZoneId,
-          properties.CleanupValidationRecords
+          stringToBoolean(properties.CleanupValidationRecords)
         )
       }
       return {
