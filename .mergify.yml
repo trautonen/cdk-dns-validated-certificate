@@ -2,25 +2,22 @@
 
 queue_rules:
   - name: default
-    update_method: merge
+    merge_method: fast-forward
+    update_method: rebase
     conditions:
-      - "#approved-reviews-by>=1"
-      - -label~=(do-not-merge)
-      - status-success=build
-      - status-success=package-js
+      - and:
+          - "#approved-reviews-by>=1"
+          - check-success=build
+          - check-success=package-js
 pull_request_rules:
-  - name: Automatic merge on approval and successful build
-    actions:
-      delete_head_branch: {}
-      queue:
-        method: squash
-        name: default
-        commit_message_template: |-
-          {{ title }} (#{{ number }})
-
-          {{ body }}
+  - name: auto-approve
     conditions:
-      - "#approved-reviews-by>=1"
-      - -label~=(do-not-merge)
-      - status-success=build
-      - status-success=package-js
+      - and:
+          - base=main
+          - label=auto-approve
+          - "#approved-reviews-by>=1"
+          - check-success=build
+          - check-success=package-js
+    actions:
+      queue:
+        name: default

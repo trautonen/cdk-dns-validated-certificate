@@ -46,11 +46,50 @@ const project = new awscdk.AwsCdkConstructLibrary({
     },
   },
 
-  autoMerge: true,
+  githubOptions: {
+    mergify: true,
+    mergifyOptions: {
+      rules: [
+        {
+          name: 'auto-approve',
+          conditions: [
+            {
+              and: [
+                'base=main',
+                'label=auto-approve',
+                '#approved-reviews-by>=1',
+                'check-success=build',
+                'check-success=package-js',
+              ],
+            },
+          ],
+          actions: {
+            queue: {
+              name: 'default',
+            },
+          },
+        },
+      ],
+      queues: [
+        {
+          name: 'default',
+          mergeMethod: 'fast-forward',
+          updateMethod: 'rebase',
+          conditions: [
+            {
+              and: ['#approved-reviews-by>=1', 'check-success=build', 'check-success=package-js'],
+            },
+          ],
+        },
+      ],
+    },
+  },
+
+  autoMerge: false,
   autoApproveUpgrades: true,
 
   autoApproveOptions: {
-    allowedUsernames: ['github-bot', 'trautonen'],
+    allowedUsernames: ['github-actions[bot]', 'trautonen'],
     label: 'auto-approve',
     secret: 'GITHUB_TOKEN',
   },
