@@ -1,6 +1,6 @@
 import { awscdk } from 'projen'
 import { LambdaRuntime } from 'projen/lib/awscdk'
-import { NodePackageManager, NpmAccess, ProseWrap } from 'projen/lib/javascript'
+import { NodePackageManager, NpmAccess, ProseWrap, UpgradeDependenciesSchedule } from 'projen/lib/javascript'
 
 const awsSdkVersion = '^3.0.0'
 
@@ -43,6 +43,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   depsUpgradeOptions: {
     workflowOptions: {
       labels: ['auto-approve'],
+      schedule: UpgradeDependenciesSchedule.WEEKLY,
     },
   },
 
