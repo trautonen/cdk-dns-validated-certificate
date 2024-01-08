@@ -32,7 +32,6 @@ jspm_packages/
 *.tgz
 .yarn-integrity
 .cache
-!/.projenrc.js
 /test-reports/
 junit.xml
 /coverage/
@@ -55,3 +54,4 @@ tsconfig.json
 !/API.md
 /assets/
 !/src/certificate-requestor-function.ts
+!/.projenrc.ts
