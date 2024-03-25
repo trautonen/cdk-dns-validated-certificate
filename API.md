@@ -15,6 +15,7 @@ const hostedZone: route53.IHostedZone = ...
 const certificate = new DnsValidatedCertificate(this, 'CrossRegionCertificate', {
   hostedZone: hostedZone,
   domainName: 'example.com',     // must be compatible with the hosted zone
+  subjectAlternativeNames: ['www.example.com'],     // must be compatible with the hosted zone
   certificateRegion: 'us-east-1' // used by for example CloudFront
 })
 ```
@@ -66,6 +67,7 @@ const hostedZone: route53.IHostedZone = ...
 const certificate = new DnsValidatedCertificate(this, 'CrossRegionCertificate', {
   hostedZone: hostedZone,
   domainName: 'example.com',     // must be compatible with the hosted zone
+  subjectAlternativeNames: ['www.example.com'],     // must be compatible with the hosted zone
   certificateRegion: 'us-east-1' // used by for example CloudFront
 })
 // # Cross-account certificate validation
@@ -260,6 +262,7 @@ Check whether the given construct is a Resource.
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.hostedZoneId">hostedZoneId</a></code> | <code>string</code> | The hosted zone identifier authoritative for the certificate. |
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.hostedZoneName">hostedZoneName</a></code> | <code>string</code> | The hosted zone name authoritative for the certificate. |
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.tags">tags</a></code> | <code>aws-cdk-lib.TagManager</code> | The tag manager to set, remove and format tags for the certificate. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.subjectAlternativeNames">subjectAlternativeNames</a></code> | <code>string[]</code> | Alternative domain names on your certificate. |
 
 ---
 
@@ -378,6 +381,18 @@ The tag manager to set, remove and format tags for the certificate.
 
 ---
 
+##### `subjectAlternativeNames`<sup>Optional</sup> <a name="subjectAlternativeNames" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.subjectAlternativeNames"></a>
+
+```typescript
+public readonly subjectAlternativeNames: string[];
+```
+
+- *Type:* string[]
+
+Alternative domain names on your certificate.
+
+---
+
 
 ## Structs <a name="Structs" id="Structs"></a>
 
@@ -401,6 +416,7 @@ const dnsValidatedCertificateProps: DnsValidatedCertificateProps = { ... }
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.cleanupValidationRecords">cleanupValidationRecords</a></code> | <code>boolean</code> | Enable or disable cleaning of validation DNS records from the hosted zone. |
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.customResourceRole">customResourceRole</a></code> | <code>aws-cdk-lib.aws_iam.IRole</code> | The role that is used for the custom resource Lambda execution. |
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | Apply the given removal policy to this resource. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.subjectAlternativeNames">subjectAlternativeNames</a></code> | <code>string[]</code> | Alternative domain names on your certificate. |
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.transparencyLoggingEnabled">transparencyLoggingEnabled</a></code> | <code>boolean</code> | Enable or disable transparency logging for this certificate. |
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.validationExternalId">validationExternalId</a></code> | <code>string</code> | External id for ``validationRole`` role assume verification. |
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.validationRole">validationRole</a></code> | <code>aws-cdk-lib.aws_iam.IRole</code> | The role that is assumed for DNS record changes for certificate validation. |
@@ -503,6 +519,20 @@ because you've removed it from the CDK application or because you've made a chan
 be replaced. The resource can be deleted (``RemovalPolicy.DESTROY``), or left in your AWS account for data
 recovery and cleanup later (``RemovalPolicy.RETAIN``). If you change this property after creation, a new
 certificate will be requested.
+
+---
+
+##### `subjectAlternativeNames`<sup>Optional</sup> <a name="subjectAlternativeNames" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.subjectAlternativeNames"></a>
+
+```typescript
+public readonly subjectAlternativeNames: string[];
+```
+
+- *Type:* string[]
+
+Alternative domain names on your certificate.
+
+May contain wildcards, such as ``*.domain.com``.
 
 ---
 

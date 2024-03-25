@@ -19,6 +19,13 @@ export interface DnsValidatedCertificateProps {
   readonly domainName: string
 
   /**
+   * Alternative domain names on your certificate.
+   *
+   * May contain wildcards, such as ``*.domain.com``.
+   */
+  readonly subjectAlternativeNames?: string[]
+
+  /**
    * Hosted zone to use for DNS validation.
    *
    * If the hosted zone is not managed by the CDK application, it needs to be provided via
@@ -125,6 +132,7 @@ const CERTTIFICATE_RESOURCE_TYPE = 'AWS::CertificateManager::Certificate'
  * const certificate = new DnsValidatedCertificate(this, 'CrossRegionCertificate', {
  *   hostedZone: hostedZone,
  *   domainName: 'example.com',     // must be compatible with the hosted zone
+ *   subjectAlternativeNames: ['www.example.com'],     // must be compatible with the hosted zone
  *   certificateRegion: 'us-east-1' // used by for example CloudFront
  * })
  * // # Cross-account certificate validation
@@ -165,6 +173,9 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
   /** The domain name included in the certificate */
   public readonly domainName: string
 
+  /** Alternative domain names on your certificate */
+  public readonly subjectAlternativeNames?: string[]
+
   /** The tag manager to set, remove and format tags for the certificate  */
   public readonly tags: cdk.TagManager
 
@@ -182,6 +193,7 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
     super(scope, id)
 
     this.domainName = this.normalizeDomainName(props.domainName)
+    this.subjectAlternativeNames = props.subjectAlternativeNames?.map(this.normalizeDomainName)
     this.hostedZoneId = this.normalizeHostedZoneId(props.hostedZone.hostedZoneId)
     this.hostedZoneName = this.normalizeDomainName(props.hostedZone.zoneName)
     this.certificateRegion = props.certificateRegion ?? this.stack.region
@@ -235,6 +247,7 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
             'ForAllValues:StringLike': {
               'route53:ChangeResourceRecordSetsNormalizedRecordNames': [
                 this.wildcardDomainName('MainDomainWildcard', this.domainName),
+                this.subjectAlternativeNames?.map((name) => this.wildcardDomainName('AlternativeDomainWildcard', name)),
               ],
             },
           },
@@ -250,7 +263,7 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
       HostedZoneId: this.hostedZoneId,
       DomainName: this.domainName,
       CertificateRegion: this.certificateRegion,
-      SubjectAlternativeNames: undefined, // not supported yet as it requires role to domain mapping
+      SubjectAlternativeNames: this.subjectAlternativeNames,
       ValidationRoleArn: props.validationRole?.roleArn,
       ValidationExternalId: props.validationExternalId,
       CleanupValidationRecords: booleanToString(props.cleanupValidationRecords ?? true),
@@ -267,7 +280,8 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
 
     this.certificateArn = certificate.getAttString('Arn')
 
-    this.node.addValidation({ validate: () => this.validateDomainToHostedZone(this.domainName, this.hostedZoneName) })
+    const domains = [this.domainName, ...(this.subjectAlternativeNames || [])]
+    this.node.addValidation({ validate: () => this.validateDomainsToHostedZone(domains, this.hostedZoneName) })
   }
 
   metricDaysToExpiry(props?: cdk.aws_cloudwatch.MetricOptions | undefined): cdk.aws_cloudwatch.Metric {
@@ -312,13 +326,19 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
     return cdk.Fn.conditionIf(isWildcard.logicalId, domainName, `*.${domainName}`).toString()
   }
 
-  private validateDomainToHostedZone(domainName: string, hostedZoneName: string): string[] {
-    if (cdk.Token.isUnresolved(domainName) || cdk.Token.isUnresolved(hostedZoneName)) {
+  private validateDomainsToHostedZone(domainNames: string[], hostedZoneName: string): string[] {
+    if (cdk.Token.isUnresolved(domainNames) || cdk.Token.isUnresolved(hostedZoneName)) {
       return []
     }
-    if (domainName !== hostedZoneName && !domainName.endsWith(`.${hostedZoneName}`)) {
-      return [`Hosted zone ${hostedZoneName} is not authoritative for certificate domain name ${domainName}`]
+
+    const errors: string[] = []
+
+    for (const domainName of domainNames) {
+      if (domainName !== hostedZoneName && !domainName.endsWith(`.${hostedZoneName}`)) {
+        errors.push(`Hosted zone ${hostedZoneName} is not authoritative for certificate domain name ${domainName}`)
+      }
     }
-    return []
+
+    return errors
   }
 }

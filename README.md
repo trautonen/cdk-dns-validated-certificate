@@ -15,6 +15,7 @@ const hostedZone: route53.IHostedZone = ...
 const certificate = new DnsValidatedCertificate(this, 'CrossRegionCertificate', {
   hostedZone: hostedZone,
   domainName: 'example.com',     // must be compatible with the hosted zone
+  subjectAlternativeNames: ['www.example.com'],     // must be compatible with the hosted zone
   certificateRegion: 'us-east-1' // used by for example CloudFront
 })
 ```
