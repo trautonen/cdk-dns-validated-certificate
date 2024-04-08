@@ -42,7 +42,7 @@
     "@aws-sdk/client-route-53": "^3.0.0",
     "@aws-sdk/client-sts": "^3.0.0",
     "@aws-sdk/types": "^3.0.0",
-    "@types/aws-lambda": "^8.10.136",
+    "@types/aws-lambda": "^8.10.137",
     "@types/jest": "^29.5.12",
     "@types/node": "^18",
     "@typescript-eslint/eslint-plugin": "^6",
@@ -64,11 +64,11 @@
     "jsii-pacmak": "^1.96.0",
     "jsii-rosetta": "~5.0.0",
     "prettier": "^2.8.8",
-    "projen": "^0.80.15",
+    "projen": "^0.80.19",
     "standard-version": "^9",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.3"
+    "typescript": "^5.4.4"
   },
   "peerDependencies": {
     "aws-cdk-lib": "^2.83.1",
