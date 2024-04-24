@@ -229,9 +229,7 @@
       "name": "release",
       "description": "Prepare a release from \"main\" branch",
       "env": {
-        "RELEASE": "true",
-        "MAJOR": "1",
-        "PRERELEASE": "beta"
+        "RELEASE": "true"
       },
       "steps": [
         {

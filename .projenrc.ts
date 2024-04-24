@@ -21,9 +21,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
   releaseToNpm: true,
   npmAccess: NpmAccess.PUBLIC,
 
-  majorVersion: 1,
-  prerelease: 'beta',
-
   lambdaOptions: {
     runtime: LambdaRuntime.NODEJS_18_X,
     bundlingOptions: {
