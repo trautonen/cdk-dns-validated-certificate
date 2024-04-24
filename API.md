@@ -39,6 +39,26 @@ const certificate = new DnsValidatedCertificate(this, 'CrossAccountCertificate',
 })
 ```
 
+## Usage for cross-account alternative names validation
+
+```typescript
+// external hosted zone
+const hostedZone: route53.IHostedZone = route53.HostedZone.fromHostedZoneAttributes(this, 'HostedZone', {
+  hostedZoneId: 'Z532DGDEDFS123456789',
+  zoneName: 'example.com',
+})
+// validation role on the same account as the hosted zone
+const roleArn = 'arn:aws:iam::123456789:role/ChangeDnsRecordsRole'
+const externalId = 'domain-assume'
+const validationRole: iam.IRole = iam.Role.fromRoleArn(this, 'ValidationRole', roleArn)
+const certificate = new DnsValidatedCertificate(this, 'CrossAccountCertificate', {
+  hostedZone: hostedZone,
+  domainName: 'example.com',
+  validationRole: validationRole,
+  validationExternalId: externalId,
+})
+```
+
 # API Reference <a name="API Reference" id="api-reference"></a>
 
 ## Constructs <a name="Constructs" id="Constructs"></a>
@@ -59,32 +79,58 @@ Please note that this construct does not support alternative names yet as it wou
 *Example*
 
 ```typescript
-// # Cross-region certificate validation
+// ### Cross-region certificate validation
 // hosted zone managed by the CDK application
 const hostedZone: route53.IHostedZone = ...
 // no separate validation role is needed
 const certificate = new DnsValidatedCertificate(this, 'CrossRegionCertificate', {
-  hostedZone: hostedZone,
   domainName: 'example.com',     // must be compatible with the hosted zone
+  validationHostedZones: [{      // hosted zone used with the execution role's permissions
+    hostedZone: hostedZone
+  }],
   certificateRegion: 'us-east-1' // used by for example CloudFront
 })
-// # Cross-account certificate validation
+// ### Cross-account certificate validation
 // external hosted zone
 const hostedZone: route53.IHostedZone =
   route53.HostedZone.fromHostedZoneAttributes(this, 'HostedZone', {
     hostedZoneId: 'Z532DGDEDFS123456789',
     zoneName: 'example.com'
   })
-// validation role on the same account as the hosted zone
+// validation role in the same account as the hosted zone
 const roleArn = 'arn:aws:iam::123456789:role/ChangeDnsRecordsRole'
 const externalId = 'domain-assume'
 const validationRole: iam.IRole =
   iam.Role.fromRoleArn(this, 'ValidationRole', roleArn)
 const certificate = new DnsValidatedCertificate(this, 'CrossAccountCertificate', {
-  hostedZone: hostedZone,
   domainName: 'example.com',
-  validationRole: validationRole,
-  validationExternalId: externalId
+  validationHostedZones: [{
+    hostedZone: hostedZone,
+    validationRole: validationRole,
+    validationExternalId: externalId
+  }]
+})
+// ### Cross-account alternative name validation
+// example.com is validated on same account against managed hosted zone
+// and secondary.com is validated against external hosted zone on other account
+const hostedZoneForMain: route53.IHostedZone = ...
+const hostedZoneForAlternative: route53.IHostedZone =
+  route53.HostedZone.fromHostedZoneAttributes(this, 'SecondaryHostedZone', {
+    hostedZoneId: 'Z532DGDEDFS123456789',
+    zoneName: 'secondary.com'
+  })
+const certificate = new DnsValidatedCertificate(this, 'CrossAccountCertificate', {
+  domainName: 'example.com',
+  alternativeDomainNames: ['secondary.com'],
+  validationHostedZones: [{
+    hostedZone: hostedZoneForMain
+  },{
+    hostedZone: hostedZoneForAlternative,
+    validationRole: iam.Role.fromRoleArn(
+      this, 'SecondaryValidationRole', 'arn:aws:iam::123456789:role/ChangeDnsRecordsRole'
+    ),
+    validationExternalId: 'domain-assume'
+  }]
 })@resource[object Object]@resource[object Object]
 ```
 
@@ -256,9 +302,6 @@ Check whether the given construct is a Resource.
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.certificateArn">certificateArn</a></code> | <code>string</code> | The certificate's ARN. |
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.certificateRegion">certificateRegion</a></code> | <code>string</code> | The region where the certificate is deployed to. |
-| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.domainName">domainName</a></code> | <code>string</code> | The domain name included in the certificate. |
-| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.hostedZoneId">hostedZoneId</a></code> | <code>string</code> | The hosted zone identifier authoritative for the certificate. |
-| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.hostedZoneName">hostedZoneName</a></code> | <code>string</code> | The hosted zone name authoritative for the certificate. |
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.tags">tags</a></code> | <code>aws-cdk-lib.TagManager</code> | The tag manager to set, remove and format tags for the certificate. |
 
 ---
@@ -330,42 +373,6 @@ The region where the certificate is deployed to.
 
 ---
 
-##### `domainName`<sup>Required</sup> <a name="domainName" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.domainName"></a>
-
-```typescript
-public readonly domainName: string;
-```
-
-- *Type:* string
-
-The domain name included in the certificate.
-
----
-
-##### `hostedZoneId`<sup>Required</sup> <a name="hostedZoneId" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.hostedZoneId"></a>
-
-```typescript
-public readonly hostedZoneId: string;
-```
-
-- *Type:* string
-
-The hosted zone identifier authoritative for the certificate.
-
----
-
-##### `hostedZoneName`<sup>Required</sup> <a name="hostedZoneName" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.hostedZoneName"></a>
-
-```typescript
-public readonly hostedZoneName: string;
-```
-
-- *Type:* string
-
-The hosted zone name authoritative for the certificate.
-
----
-
 ##### `tags`<sup>Required</sup> <a name="tags" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.tags"></a>
 
 ```typescript
@@ -396,14 +403,13 @@ const dnsValidatedCertificateProps: DnsValidatedCertificateProps = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.domainName">domainName</a></code> | <code>string</code> | Fully-qualified domain name to request a certificate for. |
-| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.hostedZone">hostedZone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | Hosted zone to use for DNS validation. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.validationHostedZones">validationHostedZones</a></code> | <code><a href="#@trautonen/cdk-dns-validated-certificate.ValidationHostedZone">ValidationHostedZone</a>[]</code> | List of hosted zones to use for validation. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.alternativeDomainNames">alternativeDomainNames</a></code> | <code>string[]</code> | Fully-qualified alternative domain names to request a certificate for. |
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.certificateRegion">certificateRegion</a></code> | <code>string</code> | AWS region where the certificate is deployed. |
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.cleanupValidationRecords">cleanupValidationRecords</a></code> | <code>boolean</code> | Enable or disable cleaning of validation DNS records from the hosted zone. |
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.customResourceRole">customResourceRole</a></code> | <code>aws-cdk-lib.aws_iam.IRole</code> | The role that is used for the custom resource Lambda execution. |
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.removalPolicy">removalPolicy</a></code> | <code>aws-cdk-lib.RemovalPolicy</code> | Apply the given removal policy to this resource. |
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.transparencyLoggingEnabled">transparencyLoggingEnabled</a></code> | <code>boolean</code> | Enable or disable transparency logging for this certificate. |
-| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.validationExternalId">validationExternalId</a></code> | <code>string</code> | External id for ``validationRole`` role assume verification. |
-| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.validationRole">validationRole</a></code> | <code>aws-cdk-lib.aws_iam.IRole</code> | The role that is assumed for DNS record changes for certificate validation. |
 
 ---
 
@@ -421,18 +427,31 @@ May contain wildcards, such as ``*.domain.com``.
 
 ---
 
-##### `hostedZone`<sup>Required</sup> <a name="hostedZone" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.hostedZone"></a>
+##### `validationHostedZones`<sup>Required</sup> <a name="validationHostedZones" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.validationHostedZones"></a>
 
 ```typescript
-public readonly hostedZone: IHostedZone;
+public readonly validationHostedZones: ValidationHostedZone[];
 ```
 
-- *Type:* aws-cdk-lib.aws_route53.IHostedZone
+- *Type:* <a href="#@trautonen/cdk-dns-validated-certificate.ValidationHostedZone">ValidationHostedZone</a>[]
 
-Hosted zone to use for DNS validation.
+List of hosted zones to use for validation.
 
-If the hosted zone is not managed by the CDK application, it needs to be provided via
-``HostedZone.fromHostedZoneAttributes()``.
+Hosted zones are mapped to domain names by the normalized zone name.
+
+---
+
+##### `alternativeDomainNames`<sup>Optional</sup> <a name="alternativeDomainNames" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.alternativeDomainNames"></a>
+
+```typescript
+public readonly alternativeDomainNames: string[];
+```
+
+- *Type:* string[]
+
+Fully-qualified alternative domain names to request a certificate for.
+
+May contain wildcards, such as ``*.otherdomain.com``.
 
 ---
 
@@ -481,9 +500,9 @@ public readonly customResourceRole: IRole;
 
 The role that is used for the custom resource Lambda execution.
 
-The role is given permissions to request certificates from ACM. If the ``validationRole`` is provided, this role
-is also given permission to assume the ``validationRole``. Otherwise it is assumed that the hosted zone is in same
-account and the execution role is given permissions to change DNS records for the given ``domainName``.
+The role is given permissions to request certificates from ACM. If there are any ``validationRole``s provided,
+this role is also given permission to assume the ``validationRole``. Otherwise it is assumed that the hosted zone
+is in same account and the execution role is given permissions to change DNS records for the given ``domainName``.
 
 ---
 
@@ -524,14 +543,52 @@ effect. If you change this property after creation, a new certificate will be re
 
 ---
 
-##### `validationExternalId`<sup>Optional</sup> <a name="validationExternalId" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.validationExternalId"></a>
+### ValidationHostedZone <a name="ValidationHostedZone" id="@trautonen/cdk-dns-validated-certificate.ValidationHostedZone"></a>
+
+#### Initializer <a name="Initializer" id="@trautonen/cdk-dns-validated-certificate.ValidationHostedZone.Initializer"></a>
+
+```typescript
+import { ValidationHostedZone } from '@trautonen/cdk-dns-validated-certificate'
+
+const validationHostedZone: ValidationHostedZone = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.ValidationHostedZone.property.hostedZone">hostedZone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | Hosted zone to use for DNS validation. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.ValidationHostedZone.property.validationExternalId">validationExternalId</a></code> | <code>string</code> | External id for ``validationRole`` role assume verification. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.ValidationHostedZone.property.validationRole">validationRole</a></code> | <code>aws-cdk-lib.aws_iam.IRole</code> | The role that is assumed for DNS record changes for certificate validation. |
+
+---
+
+##### `hostedZone`<sup>Required</sup> <a name="hostedZone" id="@trautonen/cdk-dns-validated-certificate.ValidationHostedZone.property.hostedZone"></a>
+
+```typescript
+public readonly hostedZone: IHostedZone;
+```
+
+- *Type:* aws-cdk-lib.aws_route53.IHostedZone
+
+Hosted zone to use for DNS validation.
+
+The zone name is matched to domain name to use the right
+hosted zone for validation.
+
+If the hosted zone is not managed by the CDK application, it needs to be provided via
+``HostedZone.fromHostedZoneAttributes()``.
+
+---
+
+##### `validationExternalId`<sup>Optional</sup> <a name="validationExternalId" id="@trautonen/cdk-dns-validated-certificate.ValidationHostedZone.property.validationExternalId"></a>
 
 ```typescript
 public readonly validationExternalId: string;
 ```
 
 - *Type:* string
-- *Default:* No external id provided during assume
+- *Default:* No external id provided during assume.
 
 External id for ``validationRole`` role assume verification.
 
@@ -539,7 +596,7 @@ This should be used only when ``validationRole`` is given and the role expects a
 
 ---
 
-##### `validationRole`<sup>Optional</sup> <a name="validationRole" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificateProps.property.validationRole"></a>
+##### `validationRole`<sup>Optional</sup> <a name="validationRole" id="@trautonen/cdk-dns-validated-certificate.ValidationHostedZone.property.validationRole"></a>
 
 ```typescript
 public readonly validationRole: IRole;

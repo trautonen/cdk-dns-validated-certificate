@@ -13,14 +13,17 @@ test('DnsValidatedCertificate is created', () => {
   })
 
   new DnsValidatedCertificate(stack, 'Certificate', {
-    hostedZone,
     domainName: 'example.com',
+    validationHostedZones: [
+      {
+        hostedZone,
+      },
+    ],
   })
 
   const template = Template.fromStack(stack)
 
   template.hasResourceProperties('Custom::DnsValidatedCertificate', {
-    HostedZoneId: 'Z53279245PYHBAN3YU2K',
     DomainName: 'example.com',
   })
 

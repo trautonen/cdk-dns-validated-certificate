@@ -7,45 +7,18 @@ import * as route53 from 'aws-cdk-lib/aws-route53'
 import * as custom_resources from 'aws-cdk-lib/custom-resources'
 import { Construct } from 'constructs'
 import { CertificateRequestorFunction } from './certificate-requestor-function'
-import { Properties } from './certificate-requestor.lambda'
-import { booleanToString } from './utils'
+import { Properties, ValidationHostedZoneProperties } from './certificate-requestor.lambda'
+import { booleanToString, cleanDomainName, cleanHostedZoneId } from './utils'
 
-export interface DnsValidatedCertificateProps {
+export interface ValidationHostedZone {
   /**
-   * Fully-qualified domain name to request a certificate for.
-   *
-   * May contain wildcards, such as ``*.domain.com``.
-   */
-  readonly domainName: string
-
-  /**
-   * Hosted zone to use for DNS validation.
+   * Hosted zone to use for DNS validation. The zone name is matched to domain name to use the right
+   * hosted zone for validation.
    *
    * If the hosted zone is not managed by the CDK application, it needs to be provided via
    * ``HostedZone.fromHostedZoneAttributes()``.
    */
   readonly hostedZone: route53.IHostedZone
-
-  /**
-   * AWS region where the certificate is deployed.
-   *
-   * You should use the default ``Certificate`` construct instead if the region is same as the stack's and the hosted
-   * zone is in the same account.
-   *
-   * @default - Same region as the stack.
-   */
-  readonly certificateRegion?: string
-
-  /**
-   * The role that is used for the custom resource Lambda execution.
-   *
-   * The role is given permissions to request certificates from ACM. If the ``validationRole`` is provided, this role
-   * is also given permission to assume the ``validationRole``. Otherwise it is assumed that the hosted zone is in same
-   * account and the execution role is given permissions to change DNS records for the given ``domainName``.
-   *
-   * @default - Lambda creates a default execution role.
-   */
-  readonly customResourceRole?: iam.IRole
 
   /**
    * The role that is assumed for DNS record changes for certificate validation.
@@ -64,9 +37,51 @@ export interface DnsValidatedCertificateProps {
    *
    * This should be used only when ``validationRole`` is given and the role expects an external id provided on assume.
    *
-   * @default - No external id provided during assume
+   * @default - No external id provided during assume.
    */
   readonly validationExternalId?: string
+}
+
+export interface DnsValidatedCertificateProps {
+  /**
+   * Fully-qualified domain name to request a certificate for.
+   *
+   * May contain wildcards, such as ``*.domain.com``.
+   */
+  readonly domainName: string
+
+  /**
+   * Fully-qualified alternative domain names to request a certificate for.
+   *
+   * May contain wildcards, such as ``*.otherdomain.com``.
+   */
+  readonly alternativeDomainNames?: string[]
+
+  /**
+   * List of hosted zones to use for validation. Hosted zones are mapped to domain names by the zone name.
+   */
+  readonly validationHostedZones: ValidationHostedZone[]
+
+  /**
+   * AWS region where the certificate is deployed.
+   *
+   * You should use the default ``Certificate`` construct instead if the region is same as the stack's and the hosted
+   * zone is in the same account.
+   *
+   * @default - Same region as the stack.
+   */
+  readonly certificateRegion?: string
+
+  /**
+   * The role that is used for the custom resource Lambda execution.
+   *
+   * The role is given permissions to request certificates from ACM. If there are any ``validationRole``s provided,
+   * this role is also given permission to assume the ``validationRole``. Otherwise it is assumed that the hosted zone
+   * is in same account and the execution role is given permissions to change DNS records for the given ``domainName``.
+   *
+   * @default - Lambda creates a default execution role.
+   */
+  readonly customResourceRole?: iam.IRole
 
   /**
    * Enable or disable cleaning of validation DNS records from the hosted zone.
@@ -118,32 +133,58 @@ const CERTTIFICATE_RESOURCE_TYPE = 'AWS::CertificateManager::Certificate'
  * Please note that this construct does not support alternative names yet as it would require domain to role mapping.
  *
  * @example
- * // # Cross-region certificate validation
+ * // ### Cross-region certificate validation
  * // hosted zone managed by the CDK application
  * const hostedZone: route53.IHostedZone = ...
  * // no separate validation role is needed
  * const certificate = new DnsValidatedCertificate(this, 'CrossRegionCertificate', {
- *   hostedZone: hostedZone,
  *   domainName: 'example.com',     // must be compatible with the hosted zone
+ *   validationHostedZones: [{      // hosted zone used with the execution role's permissions
+ *     hostedZone: hostedZone
+ *   }],
  *   certificateRegion: 'us-east-1' // used by for example CloudFront
  * })
- * // # Cross-account certificate validation
+ * // ### Cross-account certificate validation
  * // external hosted zone
  * const hostedZone: route53.IHostedZone =
  *   route53.HostedZone.fromHostedZoneAttributes(this, 'HostedZone', {
  *     hostedZoneId: 'Z532DGDEDFS123456789',
  *     zoneName: 'example.com'
  *   })
- * // validation role on the same account as the hosted zone
+ * // validation role in the same account as the hosted zone
  * const roleArn = 'arn:aws:iam::123456789:role/ChangeDnsRecordsRole'
  * const externalId = 'domain-assume'
  * const validationRole: iam.IRole =
  *   iam.Role.fromRoleArn(this, 'ValidationRole', roleArn)
  * const certificate = new DnsValidatedCertificate(this, 'CrossAccountCertificate', {
- *   hostedZone: hostedZone,
  *   domainName: 'example.com',
- *   validationRole: validationRole,
-     validationExternalId: externalId
+ *   validationHostedZones: [{
+ *     hostedZone: hostedZone,
+ *     validationRole: validationRole,
+ *     validationExternalId: externalId
+ *   }]
+ * })
+ * // ### Cross-account alternative name validation
+ * // example.com is validated on same account against managed hosted zone
+ * // and secondary.com is validated against external hosted zone on other account
+ * const hostedZoneForMain: route53.IHostedZone = ...
+ * const hostedZoneForAlternative: route53.IHostedZone =
+ *   route53.HostedZone.fromHostedZoneAttributes(this, 'SecondaryHostedZone', {
+ *     hostedZoneId: 'Z532DGDEDFS123456789',
+ *     zoneName: 'secondary.com'
+ *   })
+ * const certificate = new DnsValidatedCertificate(this, 'CrossAccountCertificate', {
+ *   domainName: 'example.com',
+ *   alternativeDomainNames: ['secondary.com'],
+ *   validationHostedZones: [{
+ *     hostedZone: hostedZoneForMain
+ *   },{
+ *     hostedZone: hostedZoneForAlternative,
+ *     validationRole: iam.Role.fromRoleArn(
+ *       this, 'SecondaryValidationRole', 'arn:aws:iam::123456789:role/ChangeDnsRecordsRole'
+ *     ),
+ *     validationExternalId: 'domain-assume'
+ *   }]
  * })
  *
  * @resource Custom::DnsValidatedCertificate
@@ -155,15 +196,6 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
 
   /** The region where the certificate is deployed to */
   public readonly certificateRegion: string
-
-  /** The hosted zone identifier authoritative for the certificate */
-  public readonly hostedZoneId: string
-
-  /** The hosted zone name authoritative for the certificate */
-  public readonly hostedZoneName: string
-
-  /** The domain name included in the certificate */
-  public readonly domainName: string
 
   /** The tag manager to set, remove and format tags for the certificate  */
   public readonly tags: cdk.TagManager
@@ -181,9 +213,12 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
   constructor(scope: Construct, id: string, props: DnsValidatedCertificateProps) {
     super(scope, id)
 
-    this.domainName = this.normalizeDomainName(props.domainName)
-    this.hostedZoneId = this.normalizeHostedZoneId(props.hostedZone.hostedZoneId)
-    this.hostedZoneName = this.normalizeDomainName(props.hostedZone.zoneName)
+    const domainName = this.normalizeDomainName(props.domainName)
+    const alternativeDomainNames = props.alternativeDomainNames?.map((alternativeDomainName) =>
+      this.normalizeDomainName(alternativeDomainName)
+    )
+    const allDomains = [domainName, ...(alternativeDomainNames ?? [])]
+
     this.certificateRegion = props.certificateRegion ?? this.stack.region
     this.tags = new cdk.TagManager(cdk.TagType.MAP, CERTTIFICATE_RESOURCE_TYPE)
     this.removalPolicy = props.removalPolicy ?? cdk.RemovalPolicy.DESTROY
@@ -207,26 +242,30 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
       })
     )
 
-    if (props.validationRole) {
+    const hostedZonesWithRole = props.validationHostedZones.filter((zone) => zone.validationRole !== undefined)
+    const hostedZonesWithoutRole = props.validationHostedZones.filter((zone) => zone.validationRole === undefined)
+
+    hostedZonesWithRole.forEach((zone) => {
       requestorFunction.addToRolePolicy(
         new iam.PolicyStatement({
           effect: iam.Effect.ALLOW,
           actions: ['sts:AssumeRole'],
-          resources: [props.validationRole.roleArn],
+          resources: [zone.validationRole!.roleArn],
         })
       )
-    } else {
+    })
+
+    hostedZonesWithoutRole.forEach((zone) => {
       requestorFunction.addToRolePolicy(
         new iam.PolicyStatement({
           actions: ['route53:GetChange'],
           resources: ['*'],
         })
       )
-
       requestorFunction.addToRolePolicy(
         new iam.PolicyStatement({
           actions: ['route53:ChangeResourceRecordSets'],
-          resources: [`arn:aws:route53:::hostedzone/${this.hostedZoneId}`],
+          resources: [`arn:aws:route53:::hostedzone/${this.normalizeHostedZoneId(zone.hostedZone.hostedZoneId)}`],
           conditions: {
             'ForAllValues:StringEquals': {
               'route53:ChangeResourceRecordSetsRecordTypes': ['CNAME'],
@@ -234,25 +273,33 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
             },
             'ForAllValues:StringLike': {
               'route53:ChangeResourceRecordSetsNormalizedRecordNames': [
-                this.wildcardDomainName('MainDomainWildcard', this.domainName),
+                this.wildcardDomainName('MainDomainWildcard', this.normalizeDomainName(zone.hostedZone.zoneName)),
               ],
             },
           },
         })
       )
-    }
+    })
 
     const requestorProvider = new custom_resources.Provider(this, 'RequestorProvider', {
       onEventHandler: requestorFunction,
     })
 
+    const validationHostedZones = props.validationHostedZones.map<[string, ValidationHostedZoneProperties]>((zone) => {
+      const properties: ValidationHostedZoneProperties = {
+        DomainName: this.normalizeDomainName(zone.hostedZone.zoneName),
+        HostedZoneId: this.normalizeHostedZoneId(zone.hostedZone.hostedZoneId),
+        ValidationRoleArn: zone.validationRole?.roleArn,
+        ValidationExternalId: zone.validationExternalId,
+      }
+      return [properties.DomainName, properties]
+    })
+
     const properties: Properties = {
-      HostedZoneId: this.hostedZoneId,
-      DomainName: this.domainName,
+      DomainName: domainName,
+      AlternativeDomainNames: alternativeDomainNames,
+      ValidationHostedZones: Object.fromEntries(validationHostedZones),
       CertificateRegion: this.certificateRegion,
-      SubjectAlternativeNames: undefined, // not supported yet as it requires role to domain mapping
-      ValidationRoleArn: props.validationRole?.roleArn,
-      ValidationExternalId: props.validationExternalId,
       CleanupValidationRecords: booleanToString(props.cleanupValidationRecords ?? true),
       TransparencyLoggingEnabled: booleanToString(props.transparencyLoggingEnabled ?? true),
       Tags: cdk.Lazy.any({ produce: () => this.tags.renderTags() }) as unknown as Record<string, string>,
@@ -267,7 +314,13 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
 
     this.certificateArn = certificate.getAttString('Arn')
 
-    this.node.addValidation({ validate: () => this.validateDomainToHostedZone(this.domainName, this.hostedZoneName) })
+    this.node.addValidation({
+      validate: () =>
+        this.validateDomainsToHostedZones(
+          allDomains,
+          validationHostedZones.map(([zoneName, _]) => zoneName)
+        ),
+    })
   }
 
   metricDaysToExpiry(props?: cdk.aws_cloudwatch.MetricOptions | undefined): cdk.aws_cloudwatch.Metric {
@@ -290,17 +343,14 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
     if (cdk.Token.isUnresolved(domainName)) {
       return domainName
     }
-    if (domainName.endsWith('.')) {
-      return domainName.slice(0, -1)
-    }
-    return domainName
+    return cleanDomainName(domainName)
   }
 
   private normalizeHostedZoneId(hostedZoneId: string): string {
     if (cdk.Token.isUnresolved(hostedZoneId)) {
       return hostedZoneId
     }
-    return hostedZoneId.replace(/^\/hostedzone\//, '')
+    return cleanHostedZoneId(hostedZoneId)
   }
 
   private wildcardDomainName(id: string, domainName: string): string {
@@ -312,13 +362,15 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
     return cdk.Fn.conditionIf(isWildcard.logicalId, domainName, `*.${domainName}`).toString()
   }
 
-  private validateDomainToHostedZone(domainName: string, hostedZoneName: string): string[] {
-    if (cdk.Token.isUnresolved(domainName) || cdk.Token.isUnresolved(hostedZoneName)) {
-      return []
+  private validateDomainsToHostedZones(domainNames: string[], zoneNames: string[]): string[] {
+    const errors: string[] = []
+    for (const domainName of domainNames) {
+      const resolvableDomainName = !cdk.Token.isUnresolved(domainName)
+      const resolvableZoneNames = !zoneNames.some((zoneName) => cdk.Token.isUnresolved(zoneName))
+      if (resolvableDomainName && resolvableZoneNames && !zoneNames.some((zoneName) => domainName.endsWith(zoneName))) {
+        errors.push(`Domain ${domainName} is not provided with authoritative hosted zone`)
+      }
     }
-    if (domainName !== hostedZoneName && !domainName.endsWith(`.${hostedZoneName}`)) {
-      return [`Hosted zone ${hostedZoneName} is not authoritative for certificate domain name ${domainName}`]
-    }
-    return []
+    return errors
   }
 }
