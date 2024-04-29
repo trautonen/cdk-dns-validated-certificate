@@ -8,7 +8,7 @@ import * as custom_resources from 'aws-cdk-lib/custom-resources'
 import { Construct } from 'constructs'
 import { CertificateRequestorFunction } from './certificate-requestor-function'
 import { Properties, ValidationHostedZoneProperties } from './certificate-requestor.lambda'
-import { booleanToString, cleanDomainName, cleanHostedZoneId } from './utils'
+import { booleanToString, cleanDomainName, cleanHostedZoneId, matchNamesToZones } from './utils'
 
 export interface ValidationHostedZone {
   /**
@@ -242,6 +242,11 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
       })
     )
 
+    const domainsToZones = matchNamesToZones(
+      props.validationHostedZones.map((zone) => zone.hostedZone.zoneName),
+      allDomains,
+      (domain) => domain
+    )
     const hostedZonesWithRole = props.validationHostedZones.filter((zone) => zone.validationRole !== undefined)
     const hostedZonesWithoutRole = props.validationHostedZones.filter((zone) => zone.validationRole === undefined)
 
@@ -262,23 +267,26 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
           resources: ['*'],
         })
       )
-      requestorFunction.addToRolePolicy(
-        new iam.PolicyStatement({
-          actions: ['route53:ChangeResourceRecordSets'],
-          resources: [`arn:aws:route53:::hostedzone/${this.normalizeHostedZoneId(zone.hostedZone.hostedZoneId)}`],
-          conditions: {
-            'ForAllValues:StringEquals': {
-              'route53:ChangeResourceRecordSetsRecordTypes': ['CNAME'],
-              'route53:ChangeResourceRecordSetsActions': ['UPSERT', 'DELETE'],
+      const domainNames = domainsToZones[zone.hostedZone.zoneName]
+      if (domainNames && domainNames.length > 0) {
+        requestorFunction.addToRolePolicy(
+          new iam.PolicyStatement({
+            actions: ['route53:ChangeResourceRecordSets'],
+            resources: [`arn:aws:route53:::hostedzone/${this.normalizeHostedZoneId(zone.hostedZone.hostedZoneId)}`],
+            conditions: {
+              'ForAllValues:StringEquals': {
+                'route53:ChangeResourceRecordSetsRecordTypes': ['CNAME'],
+                'route53:ChangeResourceRecordSetsActions': ['UPSERT', 'DELETE'],
+              },
+              'ForAllValues:StringLike': {
+                'route53:ChangeResourceRecordSetsNormalizedRecordNames': domainNames.map((name, index) => {
+                  return this.wildcardDomainName(`DomainWildcard${zone.hostedZone.hostedZoneId}${index}`, name)
+                }),
+              },
             },
-            'ForAllValues:StringLike': {
-              'route53:ChangeResourceRecordSetsNormalizedRecordNames': [
-                this.wildcardDomainName('MainDomainWildcard', this.normalizeDomainName(zone.hostedZone.zoneName)),
-              ],
-            },
-          },
-        })
-      )
+          })
+        )
+      }
     })
 
     const requestorProvider = new custom_resources.Provider(this, 'RequestorProvider', {

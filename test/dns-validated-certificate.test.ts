@@ -7,16 +7,25 @@ test('DnsValidatedCertificate is created', () => {
   const app = new cdk.App()
   const stack = new cdk.Stack(app, 'TestStack', {})
 
-  const hostedZone = route53.HostedZone.fromHostedZoneAttributes(stack, 'HostedZone', {
+  const mainHostedZone = route53.HostedZone.fromHostedZoneAttributes(stack, 'MainHostedZone', {
     hostedZoneId: 'Z53279245PYHBAN3YU2K',
     zoneName: 'example.com',
   })
 
+  const secondaryHostedZone = route53.HostedZone.fromHostedZoneAttributes(stack, 'SecondaryHostedZone', {
+    hostedZoneId: 'Z73479245BAEBAN3YK4V',
+    zoneName: 'secondary.com',
+  })
+
   new DnsValidatedCertificate(stack, 'Certificate', {
     domainName: 'example.com',
+    alternativeDomainNames: ['test.secondary.com'],
     validationHostedZones: [
       {
-        hostedZone,
+        hostedZone: mainHostedZone,
+      },
+      {
+        hostedZone: secondaryHostedZone,
       },
     ],
   })

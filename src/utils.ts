@@ -20,8 +20,8 @@ export const containsSame = <T>(array1: T[], array2: T[]): boolean => {
 export const orderBySignificance = (domains: string[]): string[] => {
   const copy = [...domains]
   copy.sort((a, b) => {
-    const ac = a.split('.').length
-    const bc = b.split('.').length
+    const ac = cleanDomainName(a).split('.').length
+    const bc = cleanDomainName(b).split('.').length
     if (ac > bc) {
       return -1
     }
@@ -46,6 +46,35 @@ export const cleanHostedZoneId = (hostedZoneId: string): string => {
 
 export const cleanChangeId = (changeId: string): string => {
   return changeId.replace('/change/', '')
+}
+
+export const matchNamesToZones = <T>(
+  zoneNames: string[],
+  records: T[],
+  name: (record: T) => string
+): Record<string, T[]> => {
+  const orderedZoneNames = orderBySignificance(zoneNames)
+  const matcher = (zones: string[], items: T[], result: Record<string, T[]>): Record<string, T[]> => {
+    const [firstZone, ...restZones] = zones
+    if (!firstZone) {
+      return result
+    }
+    const matchingItems: T[] = []
+    const unmatchingItems: T[] = []
+    for (const item of items) {
+      const normalizedRecordName = cleanDomainName(name(item))
+      if (normalizedRecordName.endsWith(cleanDomainName(firstZone))) {
+        matchingItems.push(item)
+      } else {
+        unmatchingItems.push(item)
+      }
+    }
+    return matcher(restZones, unmatchingItems, {
+      ...result,
+      [firstZone]: matchingItems,
+    })
+  }
+  return matcher(orderedZoneNames, records, {})
 }
 
 export const tryFor = async <T>(maxSeconds: number, timeoutError: string, fn: () => Promise<T | null>): Promise<T> => {
