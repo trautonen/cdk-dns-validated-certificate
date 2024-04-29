@@ -280,7 +280,7 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
               },
               'ForAllValues:StringLike': {
                 'route53:ChangeResourceRecordSetsNormalizedRecordNames': domainNames.map((name, index) => {
-                  return this.wildcardDomainName(`DomainWildcard${zone.hostedZone.hostedZoneId}${index}`, name)
+                  return this.wildcardDomainName(`DomainWildcard${zone.hostedZone.node.id}${index}`, name)
                 }),
               },
             },
