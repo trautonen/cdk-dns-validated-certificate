@@ -71,7 +71,7 @@
         }
       }
     ],
-    "no-duplicate-imports": [
+    "import/no-duplicates": [
       "error"
     ],
     "no-shadow": [
