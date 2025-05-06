@@ -22,7 +22,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   npmAccess: NpmAccess.PUBLIC,
 
   lambdaOptions: {
-    runtime: LambdaRuntime.NODEJS_18_X,
+    runtime: LambdaRuntime.NODEJS_22_X,
     bundlingOptions: {
       externals: ['@aws-sdk/*'],
       sourcemap: true,

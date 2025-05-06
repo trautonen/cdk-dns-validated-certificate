@@ -56,7 +56,7 @@
       "description": "Create a JavaScript bundle from src/certificate-requestor.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/certificate-requestor.lambda.ts --target=\"node18\" --platform=\"node\" --outfile=\"assets/certificate-requestor.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --sourcemap"
+          "exec": "esbuild --bundle src/certificate-requestor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"assets/certificate-requestor.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --sourcemap"
         }
       ]
     },
@@ -65,7 +65,7 @@
       "description": "Continuously update the JavaScript bundle from src/certificate-requestor.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/certificate-requestor.lambda.ts --target=\"node18\" --platform=\"node\" --outfile=\"assets/certificate-requestor.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --sourcemap --watch"
+          "exec": "esbuild --bundle src/certificate-requestor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"assets/certificate-requestor.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --sourcemap --watch"
         }
       ]
     },
