@@ -16,7 +16,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
 
   repositoryUrl: 'https://github.com/trautonen/cdk-dns-validated-certificate.git',
   defaultReleaseBranch: 'main',
-  jsiiVersion: '~5.4.0',
+  jsiiVersion: '~5.8.0',
   projenrcTs: true,
   releaseToNpm: true,
   npmAccess: NpmAccess.PUBLIC,
@@ -65,22 +65,10 @@ const project = new awscdk.AwsCdkConstructLibrary({
             },
           ],
           actions: {
-            queue: {
-              name: 'default',
+            merge: {
+              method: 'rebase',
             },
           },
-        },
-      ],
-      queues: [
-        {
-          name: 'default',
-          mergeMethod: 'fast-forward',
-          updateMethod: 'rebase',
-          conditions: [
-            {
-              and: ['#approved-reviews-by>=1', 'check-success=build', 'check-success=package-js'],
-            },
-          ],
         },
       ],
     },
