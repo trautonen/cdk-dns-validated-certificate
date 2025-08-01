@@ -17,6 +17,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   repositoryUrl: 'https://github.com/trautonen/cdk-dns-validated-certificate.git',
   defaultReleaseBranch: 'main',
   jsiiVersion: '~5.8.0',
+  typescriptVersion: '5.8.3',
   projenrcTs: true,
   releaseToNpm: true,
   npmAccess: NpmAccess.PUBLIC,

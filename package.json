@@ -44,7 +44,7 @@
     "@aws-sdk/types": "^3.0.0",
     "@types/aws-lambda": "^8.10.152",
     "@types/jest": "^29.5.14",
-    "@types/node": "^18",
+    "@types/node": "ts5.8",
     "@typescript-eslint/eslint-plugin": "^8",
     "@typescript-eslint/parser": "^8",
     "aws-cdk-lib": "2.83.1",
@@ -60,15 +60,15 @@
     "jest": "^29.7.0",
     "jest-junit": "^16",
     "jsii": "~5.8.0",
-    "jsii-diff": "^1.112.0",
+    "jsii-diff": "^1.113.0",
     "jsii-docgen": "^10.5.0",
-    "jsii-pacmak": "^1.112.0",
+    "jsii-pacmak": "^1.113.0",
     "jsii-rosetta": "~5.8.0",
     "prettier": "^2.8.8",
     "projen": "^0.95.0",
     "ts-jest": "^29.4.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "typescript": "5.8.3"
   },
   "peerDependencies": {
     "aws-cdk-lib": "^2.83.1",
