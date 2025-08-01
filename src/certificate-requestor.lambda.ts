@@ -129,7 +129,7 @@ const getRecordsForZoneNames = (
   const unmatchingRecords: ResourceRecordSet[] = []
   for (const record of records) {
     const normalizedRecordName = cleanDomainName(record.Name!)
-    if (normalizedRecordName.endsWith(zoneName)) {
+    if (normalizedRecordName === zoneName || normalizedRecordName.endsWith('.' + zoneName)) {
       matchingRecords.push(record)
     } else {
       unmatchingRecords.push(record)
