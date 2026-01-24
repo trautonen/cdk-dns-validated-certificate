@@ -240,6 +240,7 @@ Check whether the given construct is a Resource.
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.env">env</a></code> | <code>aws-cdk-lib.ResourceEnvironment</code> | The environment this resource belongs to. |
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.stack">stack</a></code> | <code>aws-cdk-lib.Stack</code> | The stack in which this resource is defined. |
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.certificateArn">certificateArn</a></code> | <code>string</code> | The certificate's ARN. |
+| <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.certificateRef">certificateRef</a></code> | <code>any</code> | A reference to a Certificate resource. |
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.certificateRegion">certificateRegion</a></code> | <code>string</code> | The region where the certificate is deployed to. |
 | <code><a href="#@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.tags">tags</a></code> | <code>aws-cdk-lib.TagManager</code> | The tag manager to set, remove and format tags for the certificate. |
 
@@ -297,6 +298,18 @@ public readonly certificateArn: string;
 - *Type:* string
 
 The certificate's ARN.
+
+---
+
+##### `certificateRef`<sup>Required</sup> <a name="certificateRef" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate.property.certificateRef"></a>
+
+```typescript
+public readonly certificateRef: any;
+```
+
+- *Type:* any
+
+A reference to a Certificate resource.
 
 ---
 
