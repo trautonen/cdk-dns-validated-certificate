@@ -51,7 +51,7 @@
     "aws-lambda": "^1.0.7",
     "commit-and-tag-version": "^12",
     "constructs": "10.0.5",
-    "esbuild": "^0.27.2",
+    "esbuild": "^0.27.3",
     "eslint": "^9",
     "eslint-config-prettier": "^8.10.2",
     "eslint-import-resolver-typescript": "^3.10.1",
@@ -65,7 +65,7 @@
     "jsii-pacmak": "^1.126.0",
     "jsii-rosetta": "~5.8.0",
     "prettier": "^2.8.8",
-    "projen": "^0.99.9",
+    "projen": "^0.99.11",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typescript": "5.8.3"
