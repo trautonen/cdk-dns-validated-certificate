@@ -320,6 +320,14 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
       properties,
     })
 
+    // Ensure CloudFormation deletes the custom resource before the Lambda
+    // function and its IAM policies. Without this dependency, the custom
+    // resource and the inline IAM policies are siblings with no dependency
+    // between them — CloudFormation may delete them in parallel during stack
+    // deletion, causing the DELETE handler to fail because the Lambda's ACM
+    // permissions have already been removed.
+    certificate.node.addDependency(requestorFunction)
+
     this.certificateArn = certificate.getAttString('Arn')
 
     this.node.addValidation({
