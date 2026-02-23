@@ -50,7 +50,7 @@
     "aws-cdk-lib": "2.83.1",
     "aws-lambda": "^1.0.7",
     "commit-and-tag-version": "^12",
-    "constructs": "10.0.5",
+    "constructs": "10.5.1",
     "esbuild": "^0.27.3",
     "eslint": "^9",
     "eslint-config-prettier": "^8.10.2",
@@ -65,14 +65,14 @@
     "jsii-pacmak": "^1.126.0",
     "jsii-rosetta": "~5.8.0",
     "prettier": "^2.8.8",
-    "projen": "^0.99.12",
+    "projen": "^0.99.16",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typescript": "5.8.3"
   },
   "peerDependencies": {
     "aws-cdk-lib": "^2.83.1",
-    "constructs": "^10.0.5"
+    "constructs": "^10.5.1"
   },
   "keywords": [
     "aws",
