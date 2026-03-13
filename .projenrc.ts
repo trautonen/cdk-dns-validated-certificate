@@ -21,6 +21,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   projenrcTs: true,
   releaseToNpm: true,
   npmAccess: NpmAccess.PUBLIC,
+  npmTrustedPublishing: true,
 
   lambdaOptions: {
     runtime: LambdaRuntime.NODEJS_22_X,
