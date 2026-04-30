@@ -54,4 +54,5 @@ tsconfig.json
 !/API.md
 /assets/
 !/src/certificate-requestor-function.ts
+!/.npmrc
 !/.projenrc.ts

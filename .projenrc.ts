@@ -1,6 +1,6 @@
 import { awscdk } from 'projen'
 import { LambdaRuntime } from 'projen/lib/awscdk'
-import { NodePackageManager, NpmAccess, ProseWrap, UpgradeDependenciesSchedule } from 'projen/lib/javascript'
+import { NodePackageManager, NpmAccess, NpmConfig, ProseWrap, UpgradeDependenciesSchedule } from 'projen/lib/javascript'
 
 const awsSdkVersion = '^3.0.0'
 
@@ -99,5 +99,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
 project.eslint?.addRules({
   'import/no-extraneous-dependencies': ['error', { devDependencies: ['src/**/*.lambda.ts'] }],
 })
+
+new NpmConfig(project, { registry: 'https://registry.npmjs.org/' })
 
 project.synth()
