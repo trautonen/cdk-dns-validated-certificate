@@ -12,7 +12,7 @@ The built-in CDK `Certificate` construct does not support cross-region or cross-
 ## Features
 
 - **Cross-region certificates** — provision a certificate in `us-east-1` for CloudFront while your stack is in any other region
-- **Cross-account validation** — validate against a Route 53 hosted zone in a different AWS account using IAM role assumption
+- **Cross-account validation** — validate against a Route 53 hosted zone in a different AWS account using IAM role assumption, with a built-in construct to create the validation role
 - **Multiple hosted zones** — validate a primary domain and alternative names against different hosted zones, each with its own credentials
 - **Automatic DNS record management** — creates and cleans up CNAME validation records automatically
 - **Certificate Transparency logging** — configurable CT logging
@@ -102,20 +102,51 @@ const distribution = new cloudfront.Distribution(this, 'Distribution', {
 
 ### Cross-Account Validation
 
-When the Route 53 hosted zone is in a different AWS account, provide an IAM role that the construct can assume to create DNS validation records in the target account. Optionally, use an external ID for additional security.
+When the Route 53 hosted zone is in a different AWS account, you need two things:
+
+1. An IAM role **in the DNS account** with permissions to modify Route 53 records
+2. The `DnsValidatedCertificate` construct **in the certificate account** configured to assume that role
+
+#### Setting Up the Validation Role (DNS Account)
+
+Use `CrossAccountValidationRole` to create the IAM role in the account that owns the Route 53 hosted zone. This construct extends `iam.Role`, so you can customize it further or pass it anywhere an `IRole` is accepted.
+
+```typescript
+import { CrossAccountValidationRole } from '@trautonen/cdk-dns-validated-certificate';
+import * as route53 from 'aws-cdk-lib/aws-route53';
+
+// In the DNS account stack
+const hostedZone = route53.HostedZone.fromLookup(this, 'HostedZone', {
+  domainName: 'example.com',
+});
+
+const validationRole = new CrossAccountValidationRole(this, 'ValidationRole', {
+  trustedAccounts: ['222222222222'],        // certificate account(s)
+  hostedZones: [hostedZone],
+  allowedDomainNames: ['example.com', '*.example.com'],  // recommended
+  externalId: 'my-external-id',            // optional
+});
+```
+
+The role grants:
+
+- `route53:ChangeResourceRecordSets` — scoped to the specified hosted zones, restricted to CNAME records with UPSERT/DELETE actions
+- `route53:GetChange` — required to wait for DNS propagation
+- When `allowedDomainNames` is set, record names are further restricted to ACM validation patterns (`_*.<domain>`)
+
+#### Requesting the Certificate (Certificate Account)
 
 ```typescript
 import { DnsValidatedCertificate } from '@trautonen/cdk-dns-validated-certificate';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as iam from 'aws-cdk-lib/aws-iam';
 
-// Reference the hosted zone in the other account
+// In the certificate account stack
 const hostedZone = route53.HostedZone.fromHostedZoneAttributes(this, 'HostedZone', {
   hostedZoneId: 'Z0123456789ABCDEFGHIJ',
   zoneName: 'example.com',
 });
 
-// IAM role in the DNS account that permits Route 53 changes
 const validationRole = iam.Role.fromRoleArn(
   this, 'ValidationRole',
   'arn:aws:iam::111111111111:role/DnsValidationRole',
@@ -126,12 +157,81 @@ const certificate = new DnsValidatedCertificate(this, 'Certificate', {
   validationHostedZones: [{
     hostedZone,
     validationRole,
-    validationExternalId: 'my-external-id', // optional
+    validationExternalId: 'my-external-id', // must match the role's external ID
   }],
 });
 ```
 
-> **Note:** The role in the DNS account must trust the account running the CDK stack and have permissions to call `route53:ChangeResourceRecordSets` and `route53:GetChange`.
+#### Full Cross-Account Example
+
+A complete setup with a shared domain used by multiple accounts, including a wildcard certificate for CloudFront:
+
+```typescript
+// ── dns-account-stack.ts (Account 111111111111) ──────────────────────
+import { CrossAccountValidationRole } from '@trautonen/cdk-dns-validated-certificate';
+import * as route53 from 'aws-cdk-lib/aws-route53';
+
+const hostedZone = route53.HostedZone.fromLookup(this, 'HostedZone', {
+  domainName: 'example.com',
+});
+
+// Allow both staging and production accounts to validate certificates
+const validationRole = new CrossAccountValidationRole(this, 'CertValidation', {
+  roleName: 'CertificateDnsValidationRole',
+  trustedAccounts: [
+    '222222222222',  // staging account
+    '333333333333',  // production account
+  ],
+  hostedZones: [hostedZone],
+  allowedDomainNames: [
+    'example.com',
+    '*.example.com',
+    'api.example.com',
+    'cdn.example.com',
+  ],
+  externalId: 'cert-validation-2024',
+});
+
+// ── certificate-account-stack.ts (Account 222222222222 or 333333333333) ──
+import { DnsValidatedCertificate } from '@trautonen/cdk-dns-validated-certificate';
+import * as route53 from 'aws-cdk-lib/aws-route53';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
+import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+
+const hostedZone = route53.HostedZone.fromHostedZoneAttributes(this, 'HostedZone', {
+  hostedZoneId: 'Z0123456789ABCDEFGHIJ',
+  zoneName: 'example.com',
+});
+
+const validationRole = iam.Role.fromRoleArn(
+  this, 'ValidationRole',
+  'arn:aws:iam::111111111111:role/CertificateDnsValidationRole',
+);
+
+// Wildcard certificate in us-east-1 for CloudFront
+const certificate = new DnsValidatedCertificate(this, 'Certificate', {
+  domainName: 'example.com',
+  alternativeDomainNames: ['*.example.com'],
+  certificateRegion: 'us-east-1',
+  validationHostedZones: [{
+    hostedZone,
+    validationRole,
+    validationExternalId: 'cert-validation-2024',
+  }],
+});
+
+const bucket = new s3.Bucket(this, 'WebsiteBucket');
+
+new cloudfront.Distribution(this, 'Distribution', {
+  domainNames: ['cdn.example.com'],
+  certificate,
+  defaultBehavior: {
+    origin: new origins.S3BucketOrigin(bucket),
+  },
+});
+```
 
 ### Multiple Hosted Zones with Alternative Names
 
@@ -288,6 +388,20 @@ const certificate = new DnsValidatedCertificate(this, 'Certificate', {
 | `hostedZone` | `IHostedZone` | Yes | — | The Route 53 hosted zone for DNS validation. |
 | `validationRole` | `IRole` | No | — | IAM role to assume for cross-account DNS changes. |
 | `validationExternalId` | `string` | No | — | External ID for the role assumption. |
+
+### `CrossAccountValidationRole`
+
+Extends `iam.Role`. Creates an IAM role for cross-account DNS validation. Deploy this in the account that owns the Route 53 hosted zones.
+
+### `CrossAccountValidationRoleProps`
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `trustedAccounts` | `string[]` | Yes | — | AWS account IDs allowed to assume this role. |
+| `hostedZones` | `IHostedZone[]` | Yes | — | Route 53 hosted zones the role can modify. |
+| `allowedDomainNames` | `string[]` | No | All domains | Domain names or wildcards to restrict validation records. |
+| `roleName` | `string` | No | Auto-generated | Name of the IAM role. |
+| `externalId` | `string` | No | — | External ID for role assumption security. |
 
 For the full API reference, see [API.md](API.md).
 
