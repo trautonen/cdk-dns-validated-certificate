@@ -1,5 +1,5 @@
 {
-  "manifestVersion": 1,
+  "manifestVersion": 2,
   "env": {
     "PATH": "$(npx -c \"node --print process.env.PATH\")"
   },
@@ -60,7 +60,7 @@
       "description": "Create a JavaScript bundle from src/certificate-requestor.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/certificate-requestor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"assets/certificate-requestor.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --sourcemap"
+          "exec": "esbuild --bundle src/certificate-requestor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"assets/certificate-requestor.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/* --sourcemap"
         }
       ]
     },
@@ -69,7 +69,7 @@
       "description": "Continuously update the JavaScript bundle from src/certificate-requestor.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/certificate-requestor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"assets/certificate-requestor.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --sourcemap --watch"
+          "exec": "esbuild --bundle src/certificate-requestor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"assets/certificate-requestor.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/* --sourcemap --watch"
         }
       ]
     },
@@ -128,7 +128,7 @@
       "description": "Synthesize project files",
       "steps": [
         {
-          "exec": "ts-node --project tsconfig.dev.json .projenrc.ts"
+          "exec": "ts-node --project test/tsconfig.json .projenrc.ts"
         }
       ]
     },
@@ -137,7 +137,11 @@
       "description": "Generate API.md from .jsii manifest",
       "steps": [
         {
-          "exec": "jsii-docgen -o API.md"
+          "execArgs": [
+            "jsii-docgen",
+            "-o",
+            "API.md"
+          ]
         }
       ]
     },
@@ -213,7 +217,12 @@
       "description": "Create js language bindings",
       "steps": [
         {
-          "exec": "jsii-pacmak -v --target js"
+          "execArgs": [
+            "jsii-pacmak",
+            "-v",
+            "--target",
+            "js"
+          ]
         }
       ]
     },
