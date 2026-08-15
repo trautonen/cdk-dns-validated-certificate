@@ -365,7 +365,10 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
   /** A reference to a Certificate resource. */
   public get certificateRef(): any {
     return {
+      // In aws-cdk-lib 2.264.0 the required property of certificatemanager.ICertificateRef was changed from certificateId to certificateArn
+      // We provide both properties here to keep compatability with older CDK versions
       certificateId: this.certificateArn,
+      certificateArn: this.certificateArn,
     }
   }
 
