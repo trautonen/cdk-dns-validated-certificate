@@ -360,13 +360,13 @@ export class DnsValidatedCertificate extends cdk.Resource implements certificate
     this.removalPolicy = policy
   }
 
-  // certificateRef is a required property of type certificatemanager.ICertificateRef on certificatemanager.ICertificate since aws-cdk-lib 2.35.0
-  // We use type any here to keep compatability with older CDK versions
+  // certificatemanager.ICertificate extends ICertificateRef since aws-cdk-lib 2.235.0. The reference property was
+  // certificateId until 2.264.0 renamed it to certificateArn. Both carry the ARN, which is what Ref returns for
+  // AWS::CertificateManager::Certificate in either version, so both are set to cover the whole peer range.
+  // The return type is any to also compile against CDK versions predating ICertificateRef.
   /** A reference to a Certificate resource. */
   public get certificateRef(): any {
     return {
-      // In aws-cdk-lib 2.264.0 the required property of certificatemanager.ICertificateRef was changed from certificateId to certificateArn
-      // We provide both properties here to keep compatability with older CDK versions
       certificateId: this.certificateArn,
       certificateArn: this.certificateArn,
     }
