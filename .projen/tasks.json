@@ -82,7 +82,17 @@
       "description": "Create a JavaScript bundle from src/certificate-requestor.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/certificate-requestor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"assets/certificate-requestor.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/* --sourcemap"
+          "execArgs": [
+            "esbuild",
+            "--bundle",
+            "src/certificate-requestor.lambda.ts",
+            "--target=node22",
+            "--platform=node",
+            "--outfile=assets/certificate-requestor.lambda/index.js",
+            "--tsconfig=test/tsconfig.json",
+            "--external:@aws-sdk/*",
+            "--sourcemap"
+          ]
         }
       ]
     },
@@ -91,7 +101,18 @@
       "description": "Continuously update the JavaScript bundle from src/certificate-requestor.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/certificate-requestor.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"assets/certificate-requestor.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/* --sourcemap --watch"
+          "execArgs": [
+            "esbuild",
+            "--bundle",
+            "src/certificate-requestor.lambda.ts",
+            "--target=node22",
+            "--platform=node",
+            "--outfile=assets/certificate-requestor.lambda/index.js",
+            "--tsconfig=test/tsconfig.json",
+            "--external:@aws-sdk/*",
+            "--sourcemap",
+            "--watch"
+          ]
         }
       ]
     },
@@ -103,22 +124,35 @@
       },
       "steps": [
         {
-          "exec": "git checkout -b scratch",
+          "execArgs": [
+            "git",
+            "checkout",
+            "-b",
+            "scratch"
+          ],
           "name": "save current HEAD in \"scratch\" branch"
         },
         {
-          "exec": "git checkout $BRANCH"
+          "exec": "git checkout \"$BRANCH\""
         },
         {
-          "exec": "git fetch origin",
+          "execArgs": [
+            "git",
+            "fetch",
+            "origin"
+          ],
           "name": "fetch latest changes from origin"
         },
         {
-          "exec": "git reset --hard origin/$BRANCH",
+          "exec": "git reset --hard \"origin/$BRANCH\"",
           "name": "hard reset to origin commit"
         },
         {
-          "exec": "git clean -fdx",
+          "execArgs": [
+            "git",
+            "clean",
+            "-fdx"
+          ],
           "name": "clean all untracked files"
         },
         {
@@ -132,7 +166,13 @@
       "description": "Perform API compatibility check against latest version",
       "steps": [
         {
-          "exec": "jsii-diff npm:$(node -p \"require('./package.json').name\") -k --ignore-file .compatignore || (echo \"\nUNEXPECTED BREAKING CHANGES: add keys such as 'removed:constructs.Node.of' to .compatignore to skip.\n\" && exit 1)"
+          "execArgs": [
+            "jsii-diff",
+            "npm:@trautonen/cdk-dns-validated-certificate",
+            "-k",
+            "--ignore-file",
+            ".compatignore"
+          ]
         }
       ]
     },
@@ -193,7 +233,19 @@
       },
       "steps": [
         {
-          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern $@ src test build-tools projenrc .projenrc.ts",
+          "execArgs": [
+            "eslint",
+            "--ext",
+            ".ts,.tsx",
+            "--fix",
+            "--no-error-on-unmatched-pattern",
+            "$@",
+            "src",
+            "test",
+            "build-tools",
+            "projenrc",
+            ".projenrc.ts"
+          ],
           "receiveArgs": true
         }
       ]
@@ -283,7 +335,11 @@
       },
       "steps": [
         {
-          "exec": "rm -fr dist"
+          "execArgs": [
+            "rm",
+            "-fr",
+            "dist"
+          ]
         },
         {
           "spawn": "bump"
@@ -304,7 +360,11 @@
       "description": "Run tests",
       "steps": [
         {
-          "exec": "jest --passWithNoTests --updateSnapshot",
+          "execArgs": [
+            "jest",
+            "--passWithNoTests",
+            "--updateSnapshot"
+          ],
           "receiveArgs": true
         },
         {
@@ -317,7 +377,10 @@
       "description": "Run jest in watch mode",
       "steps": [
         {
-          "exec": "jest --watch"
+          "execArgs": [
+            "jest",
+            "--watch"
+          ]
         }
       ]
     },
