@@ -89,6 +89,7 @@
             "--target=node22",
             "--platform=node",
             "--outfile=assets/certificate-requestor.lambda/index.js",
+            "--packages=bundle",
             "--tsconfig=test/tsconfig.json",
             "--external:@aws-sdk/*",
             "--sourcemap"
@@ -108,6 +109,7 @@
             "--target=node22",
             "--platform=node",
             "--outfile=assets/certificate-requestor.lambda/index.js",
+            "--packages=bundle",
             "--tsconfig=test/tsconfig.json",
             "--external:@aws-sdk/*",
             "--sourcemap",
@@ -353,7 +355,8 @@
         {
           "exec": "git diff --ignore-space-at-eol --exit-code"
         }
-      ]
+      ],
+      "condition": "git log --oneline -1 | grep -v \"chore(release):\" > /dev/null"
     },
     "test": {
       "name": "test",
