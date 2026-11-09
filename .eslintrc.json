@@ -45,6 +45,7 @@
     "node_modules/",
     "*.generated.ts",
     "coverage",
+    "src/certificate-requestor-function.ts",
     "!.projenrc.ts",
     "!projenrc/**/*.ts"
   ],
