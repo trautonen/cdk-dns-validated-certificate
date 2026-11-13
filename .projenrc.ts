@@ -7,7 +7,7 @@ const awsSdkVersion = '^3.0.0'
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Tapio Rautonen',
   authorAddress: 'trautonen@users.noreply.github.com',
-  cdkVersion: '2.83.1',
+  cdkVersion: '2.87.0',
   name: 'cdk-dns-validated-certificate',
   packageName: '@trautonen/cdk-dns-validated-certificate',
   description: 'CDK certificate construct that supports cross-region and cross-account DNS validation',
@@ -24,7 +24,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   npmTrustedPublishing: true,
 
   lambdaOptions: {
-    runtime: LambdaRuntime.NODEJS_22_X,
+    runtime: LambdaRuntime.NODEJS_24_X,
     bundlingOptions: {
       externals: ['@aws-sdk/*'],
       sourcemap: true,

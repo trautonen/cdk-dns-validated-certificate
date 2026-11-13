@@ -41,7 +41,7 @@ This construct requires the following peer dependencies:
 
 | Package | Version |
 |---|---|
-| `aws-cdk-lib` | `>= 2.83.1` |
+| `aws-cdk-lib` | `>= 2.87.0` |
 | `constructs` | `>= 10.5.1` |
 
 ## Quick Start
@@ -293,7 +293,7 @@ For the full API reference, see [API.md](API.md).
 
 ## How It Works
 
-The construct deploys a Lambda function (Node.js 22.x, ARM64) as a CloudFormation custom resource that:
+The construct deploys a Lambda function (Node.js 24.x, ARM64) as a CloudFormation custom resource that:
 
 1. **Requests** a DNS-validated certificate from ACM
 2. **Creates** CNAME validation records in the specified Route 53 hosted zones (assuming cross-account roles when needed)

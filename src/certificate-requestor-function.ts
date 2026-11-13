@@ -17,7 +17,7 @@ export class CertificateRequestorFunction extends lambda.Function {
     super(scope, id, {
       description: 'src/certificate-requestor.lambda.ts',
       ...props,
-      runtime: new lambda.Runtime('nodejs22.x', lambda.RuntimeFamily.NODEJS, { supportsInlineCode: true }),
+      runtime: new lambda.Runtime('nodejs24.x', lambda.RuntimeFamily.NODEJS, { supportsInlineCode: true }),
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../assets/certificate-requestor.lambda')),
     });
