@@ -4,7 +4,7 @@
 
 ### DnsValidatedCertificate <a name="DnsValidatedCertificate" id="@trautonen/cdk-dns-validated-certificate.DnsValidatedCertificate"></a>
 
-- *Implements:* aws-cdk-lib.aws_certificatemanager.ICertificate, aws-cdk-lib.ITaggable
+- *Implements:* constructs.IConstruct, constructs.IDependable, aws-cdk-lib.IResource, aws-cdk-lib.aws_certificatemanager.ICertificate, aws-cdk-lib.ITaggable
 
 A certificate managed by AWS Certificate Manager.
 
